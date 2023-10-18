@@ -14,4 +14,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: make
-      run: cd BLELib2_cpp && g++ Main.cpp FunShare.cpp
+      run: cd BLELib2_cpp && g++ Main.cpp FunShare.cpp | exit ${PIPESTATUS[0]}
