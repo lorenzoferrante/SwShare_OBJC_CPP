@@ -25,4 +25,4 @@ jobs:
           scheme: ${{ 'default' }}
         run: |
           if [ $scheme = default ]; then scheme=$(cat default); fi
-          xcodebuild clean build -configuration "Debug" -target "BLELib2" -scheme "$scheme" -destination generic/platform=iOS | xcpretty && exit ${PIPESTATUS[0]}
+          xcodebuild build -configuration "Debug" -target "BLELib2" -scheme "$scheme" -destination generic/platform=iOS
