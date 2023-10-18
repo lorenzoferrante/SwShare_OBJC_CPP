@@ -25,4 +25,4 @@ jobs:
           scheme: ${{ 'default' }}
         run: |
           if [ $scheme = default ]; then scheme=$(cat default); fi
-          xcodebuild build -configuration "Debug" -target "BLELib2" -scheme "$scheme" -destination "platform:iOS Simulator, id:dvtdevice-DVTiOSDeviceSimulatorPlaceholder-iphonesimulator:placeholder, name:Any iOS Simulator Device"
+          xcodebuild build -configuration "Debug" -target "BLELib2" -scheme "$scheme" -destination "platform='iOS Simulator', id='dvtdevice-DVTiOSDeviceSimulatorPlaceholder-iphonesimulator:placeholder', name='Any iOS Simulator Device'"
