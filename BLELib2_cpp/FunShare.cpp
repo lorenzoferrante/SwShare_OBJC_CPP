@@ -1,18 +1,18 @@
 //
-//  Main.cpp
+//  FunShare.cpp
 //  BLELib2
 //
 //  Created by Lorenzo Ferrante on 13/10/23.
 //
 
-#include "Main.h"
+#include "FunShare.h"
 #include "time.h"
 
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
 #import <BLELib2/AESFunctions.h>
 
-@implementation Main
+@implementation FunShare
 #else
 
 #include "AESFunctions.cpp"

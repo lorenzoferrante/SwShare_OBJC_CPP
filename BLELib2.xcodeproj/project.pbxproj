@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		509DB30B2AD9460000E997C0 /* BLELib2.h in Headers */ = {isa = PBXBuildFile; fileRef = 509DB30A2AD9460000E997C0 /* BLELib2.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		509DB3132AD9462A00E997C0 /* Main.m in Sources */ = {isa = PBXBuildFile; fileRef = 509DB3112AD9462A00E997C0 /* Main.m */; };
-		509DB3142AD9462A00E997C0 /* Main.h in Headers */ = {isa = PBXBuildFile; fileRef = 509DB3122AD9462A00E997C0 /* Main.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		509DB3132AD9462A00E997C0 /* FunShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 509DB3112AD9462A00E997C0 /* FunShare.m */; };
+		509DB3142AD9462A00E997C0 /* FunShare.h in Headers */ = {isa = PBXBuildFile; fileRef = 509DB3122AD9462A00E997C0 /* FunShare.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50D1E1982ADED304007FC53E /* sw_share.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1E1972ADED304007FC53E /* sw_share.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50D1E19C2ADEDBBE007FC53E /* AESFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1E19B2ADEDBBE007FC53E /* AESFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50D1E19E2ADEDC9E007FC53E /* AESFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1E19D2ADEDC9E007FC53E /* AESFunctions.m */; };
@@ -18,8 +18,8 @@
 /* Begin PBXFileReference section */
 		509DB3072AD9460000E997C0 /* BLELib2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BLELib2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		509DB30A2AD9460000E997C0 /* BLELib2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BLELib2.h; sourceTree = "<group>"; };
-		509DB3112AD9462A00E997C0 /* Main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Main.m; sourceTree = "<group>"; };
-		509DB3122AD9462A00E997C0 /* Main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Main.h; sourceTree = "<group>"; };
+		509DB3112AD9462A00E997C0 /* FunShare.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FunShare.m; sourceTree = "<group>"; };
+		509DB3122AD9462A00E997C0 /* FunShare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FunShare.h; sourceTree = "<group>"; };
 		50D1E1972ADED304007FC53E /* sw_share.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sw_share.h; sourceTree = "<group>"; };
 		50D1E19B2ADEDBBE007FC53E /* AESFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AESFunctions.h; sourceTree = "<group>"; };
 		50D1E19D2ADEDC9E007FC53E /* AESFunctions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AESFunctions.m; sourceTree = "<group>"; };
@@ -56,8 +56,8 @@
 			isa = PBXGroup;
 			children = (
 				509DB30A2AD9460000E997C0 /* BLELib2.h */,
-				509DB3112AD9462A00E997C0 /* Main.m */,
-				509DB3122AD9462A00E997C0 /* Main.h */,
+				509DB3112AD9462A00E997C0 /* FunShare.m */,
+				509DB3122AD9462A00E997C0 /* FunShare.h */,
 				50D1E1972ADED304007FC53E /* sw_share.h */,
 				50D1E19D2ADEDC9E007FC53E /* AESFunctions.m */,
 				50D1E19B2ADEDBBE007FC53E /* AESFunctions.h */,
@@ -73,7 +73,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				509DB30B2AD9460000E997C0 /* BLELib2.h in Headers */,
-				509DB3142AD9462A00E997C0 /* Main.h in Headers */,
+				509DB3142AD9462A00E997C0 /* FunShare.h in Headers */,
 				50D1E19C2ADEDBBE007FC53E /* AESFunctions.h in Headers */,
 				50D1E1982ADED304007FC53E /* sw_share.h in Headers */,
 			);
@@ -147,7 +147,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				509DB3132AD9462A00E997C0 /* Main.m in Sources */,
+				509DB3132AD9462A00E997C0 /* FunShare.m in Sources */,
 				50D1E19E2ADEDC9E007FC53E /* AESFunctions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

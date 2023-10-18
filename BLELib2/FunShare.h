@@ -5,8 +5,8 @@
 //  Created by Lorenzo Ferrante on 13/10/23.
 //
 
-#ifndef Main_h
-#define Main_h
+#ifndef FunShare_h
+#define FunShare_h
 
 #include <stdio.h>
 #include <stdint.h>
@@ -18,7 +18,7 @@
 #include <Foundation/Foundation.h>
 #import <BLELib2/sw_share.h>
 
-@interface Main : NSObject
+@interface FunShare : NSObject
 #else
 
 #include "sw_share.h"
@@ -39,4 +39,4 @@ uint32_t get_my_date(void);
 @end
 #endif
 
-#endif /* Main_h */
+#endif /* FunShare_h */
