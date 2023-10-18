@@ -25,4 +25,4 @@ jobs:
           scheme: ${{ 'default' }}
         run: |
           if [ $scheme = default ]; then scheme=$(cat default); fi
-          xcodebuild build -configuration "Debug" -target "BLELib2" -scheme "$scheme" -destination "platform=macOS, arch=x86_64, variant='Mac Catalyst', id='1FAF1629-5858-41E1-900E-853BFF869E35'"
+          xcodebuild build -configuration "Debug" -target "BLELib2" -scheme "$scheme" -destination "platform=macOS, arch=x86_64, variant='Mac Catalyst', id=1FAF1629-5858-41E1-900E-853BFF869E35"
