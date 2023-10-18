@@ -14,16 +14,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set Default Scheme
-        run: |
-          scheme_list=$(xcodebuild -list -json | tr -d "\n")
-          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
-          echo $default | cat >default
-          echo Using default scheme: $default
-      - name: Build
-        env:
-          platform: '{ platform:macOS, variant:Mac Catalyst, name:Any Mac }'
-        run: |
-          # xcrun xctrace returns via stderr, not the expected stdout (see https://developer.apple.com/forums/thread/663959)
-          device=`xcrun xctrace list devices 2>&1 | grep -oE 'iPhone.*?[^\(]+' | head -1 | awk '{$1=$1;print}' | sed -e "s/ Simulator$//"`
-          xcodebuild clean build -scheme "BLELib2" -destination "platform=$platform"
+      - name: Xcodebuild Action
+        uses: sersoft-gmbh/xcodebuild-action@v3.1
+        with:
+          project: BLELib2.xcodeproj
+          scheme: BLELib2
+          destination: platform=macOS
+          action: build
+          
