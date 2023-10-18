@@ -23,6 +23,8 @@ jobs:
       - name: Build
         env:
           scheme: ${{ 'default' }}
+          platform: ${{ 'iOS Simulator' }}
         run: |
-          if [ $scheme = default ]; then scheme=$(cat default); fi
-          xcodebuild build -configuration "Debug" -target "BLELib2" -scheme "$scheme" -destination "platform=macOS, arch=x86_64, variant='Mac Catalyst', id=1FAF1629-5858-41E1-900E-853BFF869E35"
+          # xcrun xctrace returns via stderr, not the expected stdout (see https://developer.apple.com/forums/thread/663959)
+          device=`xcrun xctrace list devices 2>&1 | grep -oE 'iPhone.*?[^\(]+' | head -1 | awk '{$1=$1;print}' | sed -e "s/ Simulator$//"`
+          xcodebuild clean build -scheme "$scheme" -destination "platform=$platform,name=$device"
