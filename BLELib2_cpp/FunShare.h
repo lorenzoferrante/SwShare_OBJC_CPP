@@ -33,6 +33,7 @@ int32_t prepare_data_for_gen_command (api_query_t *query, api_answer_t *answer, 
 uint8_t isleap(uint8_t year);
 void gettime(uint32_t t, t_calendar *r);
 uint32_t _mktime(t_calendar * t);
+uint32_t maketime(t_calendar * t);
 uint32_t get_my_date(void);
     
 #ifdef __OBJC__

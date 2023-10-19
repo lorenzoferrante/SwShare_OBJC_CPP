@@ -288,6 +288,31 @@ uint32_t get_my_date(void) {
     return loc_time;
 }
 
+//-----------------------------------------------------------------------------
+// converte una struttura in tempo
+uint32_t maketime(t_calendar * t)
+{
+	uint32_t	day;
+	uint32_t	i;
+
+	// Servirebbe ma sempre falsa perche' e' un unsigned char
+	// if ( t->year < MAGIC_SUFF )
+	//		return (dword) -1;*/
+	// day = t->yday = spm [t->mon] + t->day-1 + ( isleap (t->year+MAGIC_PREF)  &  (t->mon > 1) );
+	day = spm [(int)t->mon] + t->day-1 + ( isleap ((uint8_t)(t->year+MAGIC_PREF))  &  (t->mon > 1) );
+
+	for ( i = MAGIC_SUFF; i < t->year; i++ )
+		day += (365 + isleap ((uint8_t)(i+MAGIC_PREF)));
+
+	// day is now the number of days since 'Jan 1 1970'
+	i = 7;
+	t->wday = (day + MAGIC_WDAY) % i;  // Sunday=0, Monday=1, ..., Saturday=6
+
+	i = 24;
+	day *= i;
+	i = 60;
+	return ((day + t->hour) * i + t->min) * i + t->sec;
+}
 
 #ifdef __OBJC__
 @end
