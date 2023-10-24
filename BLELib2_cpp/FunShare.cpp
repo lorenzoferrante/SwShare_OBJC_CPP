@@ -15,7 +15,7 @@
 @implementation FunShare
 #else
 
-#include "AESFunctions.cpp"
+#include "AESFunctions.h"
 #endif
 
 #if defined(__OBJC__) && defined(CMP_CRIPTAZIONE)

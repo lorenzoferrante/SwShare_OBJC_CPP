@@ -315,14 +315,14 @@ void print_hex(unsigned char *p, int len) {
     printf("\n");
 }
 
-static void xor_block(void *d, const void *s) {
+void xor_block(void *d, const void *s) {
     ((uint32_t*)d)[ 0] ^= ((uint32_t*)s)[ 0];
     ((uint32_t*)d)[ 1] ^= ((uint32_t*)s)[ 1];
     ((uint32_t*)d)[ 2] ^= ((uint32_t*)s)[ 2];
     ((uint32_t*)d)[ 3] ^= ((uint32_t*)s)[ 3];
 }
 
-static void copy_and_key(void *d, const void *s, const void *k) {
+void copy_and_key(void *d, const void *s, const void *k) {
     ((uint32_t*)d)[ 0] = ((uint32_t*)s)[ 0] ^ ((uint32_t*)k)[ 0];
     ((uint32_t*)d)[ 1] = ((uint32_t*)s)[ 1] ^ ((uint32_t*)k)[ 1];
     ((uint32_t*)d)[ 2] = ((uint32_t*)s)[ 2] ^ ((uint32_t*)k)[ 2];
@@ -330,7 +330,7 @@ static void copy_and_key(void *d, const void *s, const void *k) {
 }
 
 #if defined( VERSION_1 )
-static void mix_sub_columns(uint8_t *dt) {
+void mix_sub_columns(uint8_t *dt) {
     uint8_t st[N_BLOCK_AES];
     block_copy(st, dt);
 #else
@@ -358,7 +358,7 @@ static void mix_sub_columns( uint8_t dt[N_BLOCK_AES], uint8_t st[N_BLOCK_AES] ) 
 }
 
 #if defined( VERSION_1 )
-static void inv_mix_sub_columns(uint8_t *dt) {
+void inv_mix_sub_columns(uint8_t *dt) {
     uint8_t st[N_BLOCK_AES];
     block_copy(st, dt);
 #else
@@ -385,7 +385,7 @@ static void inv_mix_sub_columns(uint8_t *dt) {
     dt[11] = is_box(gfm_b(st[12]) ^ gfm_d(st[13]) ^ gfm_9(st[14]) ^ gfm_e(st[15]));
 }
 
-static void inv_shift_sub_rows(uint8_t *st) {
+void inv_shift_sub_rows(uint8_t *st) {
     uint8_t tt;
 
     st[ 0] = is_box(st[ 0]); st[ 4] = is_box(st[ 4]);
@@ -401,11 +401,11 @@ static void inv_shift_sub_rows(uint8_t *st) {
     st[11] = is_box(st[15]); st[15] = is_box( tt );
 }
 
-static void add_round_key(uint8_t *d, const uint8_t *k) {
+void add_round_key(uint8_t *d, const uint8_t *k) {
     xor_block(d, k);
 }
 
-static void shift_sub_rows(uint8_t *st) {
+void shift_sub_rows(uint8_t *st) {
     uint8_t tt;
 
     st[ 0] = s_box(st[ 0]); st[ 4] = s_box(st[ 4]);
@@ -421,7 +421,7 @@ static void shift_sub_rows(uint8_t *st) {
     st[ 7] = s_box(st[ 3]); st[ 3] = s_box( tt );
 }
 
-static return_type_aes aes_set_key(const unsigned char *key, length_type_aes keylen, aes_context *ctx) {
+return_type_aes aes_set_key(const unsigned char *key, length_type_aes keylen, aes_context *ctx) {
     uint8_t cc, rc, hi;
 
     switch( keylen )
@@ -477,7 +477,7 @@ static return_type_aes aes_set_key(const unsigned char *key, length_type_aes key
     return 0;
 }
 
-static return_type_aes aes_encrypt(const unsigned char *in, unsigned char *out, const aes_context *ctx) {
+return_type_aes aes_encrypt(const unsigned char *in, unsigned char *out, const aes_context *ctx) {
     if( ctx->rnd )
     {
         uint8_t s1[N_BLOCK_AES], r;
@@ -503,7 +503,7 @@ static return_type_aes aes_encrypt(const unsigned char *in, unsigned char *out, 
     return 0;
 }
 
-static return_type_aes
+return_type_aes
     aes_cbc_encrypt(const unsigned char *in, unsigned char *out, uint16_t n_block, unsigned char *iv,
                          const aes_context *ctx) {
     while(n_block--) {
@@ -543,7 +543,7 @@ return_type_aes aes_decrypt(const unsigned char *in, unsigned char *out, const a
     return 0;
 }
 
-static return_type_aes
+return_type_aes
     aes_cbc_decrypt(const unsigned char *in, unsigned char *out, uint16_t n_block, unsigned char *iv,
                          const aes_context *ctx) {
     while(n_block--)
@@ -563,7 +563,7 @@ static return_type_aes
 #ifdef __OBJC__
 + (uint32_t) data_encrypt:(unsigned char *)ptr and:(uint32_t)len and:(unsigned char *)key and:(aes_mode_t)mode {
 #else
-static uint32_t data_encrypt(unsigned char *ptr, uint32_t len, unsigned char *key, aes_mode_t mode) {
+uint32_t data_encrypt(unsigned char *ptr, uint32_t len, unsigned char *key, aes_mode_t mode) {
 #endif
 #if !defined(__NEXUS_PLUS__) && !defined(__MENTOR_BUS__)
     aes_context ctx;
@@ -604,7 +604,7 @@ static uint32_t data_encrypt(unsigned char *ptr, uint32_t len, unsigned char *ke
     return l;
 }
 
-static uint32_t data_pad(unsigned char *buffer, uint32_t size) {
+uint32_t data_pad(unsigned char *buffer, uint32_t size) {
     int val = ((size / ENC_KEY_LENGTH) + 1) * ENC_KEY_LENGTH;
     int res = val - size;
     int i;

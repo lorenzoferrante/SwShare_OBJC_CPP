@@ -15,6 +15,6 @@ FOUNDATION_EXPORT const unsigned char BLELib2VersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <BLELib2/PublicHeader.h>
 
-#import <BLELib2/Main.h>
+#import <BLELib2/FunShare.h>
 #import <BLELib2/sw_share.h>
 #import <BLELib2/AESFunctions.h>
