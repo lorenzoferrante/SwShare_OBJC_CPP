@@ -15,7 +15,7 @@ jobs:
       - name: Get info
         run: echo $( ls ); echo $( pwd )
       - name: Make the script files executable
-        run: chmod +x makeFramework.sh
+        run: chmod +x $(pwd)/makeFramework.sh
       - name: Move File
         run: ./makeFramework.sh BLELib2 move
       - name: Build framework
