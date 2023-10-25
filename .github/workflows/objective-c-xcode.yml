@@ -13,7 +13,7 @@ jobs:
     
     steps:
       - name: Get info
-        run: echo $( ls ); echo $( pwd ); cd ..
+        run: cd /User && echo $( ls )
       - name: Make the script files executable
         run: chmod +x /Users/runner/work/SwShare_OBJC_CPP/makeFramework.sh
       - name: Move File
