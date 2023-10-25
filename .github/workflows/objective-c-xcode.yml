@@ -10,15 +10,13 @@ jobs:
   build:
     name: Build and analyse default scheme using xcodebuild command
     runs-on: macos-latest
-    defaults:
-      run:
-        working-directory: ./
+    
     steps:
       - name: Make the script files executable
-        run: chmod +x ../makeFramework.sh
+        run: chmod +x ./scripts/makeFramework.sh
       - name: Move File
-        run: ../makeFramework.sh BLELib2 move
+        run: ./scripts/makeFramework.sh BLELib2 move
       - name: Build framework
-        run: ../makeFramework.sh BLELib2 build
+        run: ./scripts/makeFramework.sh BLELib2 build
       - name: Clean project
-        run: ../makeFramework.sh BLELib2 clean
+        run: ./scripts/makeFramework.sh BLELib2 clean
