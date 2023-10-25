@@ -12,10 +12,10 @@ jobs:
     runs-on: macos-latest
     
     steps:
+      - uses: actions/checkout@v2
       - name: Get info
-        run: cd /User && echo $( ls )
       - name: Make the script files executable
-        run: chmod +x /Users/runner/work/SwShare_OBJC_CPP/makeFramework.sh
+        run: chmod +x ./makeFramework.sh
       - name: Move File
         run: ./makeFramework.sh BLELib2 move
       - name: Build framework
