@@ -15,9 +15,14 @@ jobs:
       - uses: actions/checkout@v3
       - name: Make the script files executable
         run: chmod +x ./makeFramework.sh
+
+      - uses: actions/checkout@v3
       - name: Move File
         run: ./makeFramework.sh BLELib2 move
+
+      - uses: actions/checkout@v3
       - name: Build framework
         run: ./makeFramework.sh BLELib2 build
+
       - name: Clean project
         run: ./makeFramework.sh BLELib2 clean
