@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BUILD_DIR=build/xcframeworks
+BUILD_DIR=./build/xcframeworks
 simulatorSdk=iphonesimulator
 simulatorDataPath=$BUILD_DIR/$simulatorSdk
 scheme=$1
@@ -53,7 +53,7 @@ buildFramework() {
 cleanProject() {
     echo "*** Cleaning project ***"
     local projectDir="${scheme}"
-    cp "./${BUILD_DIR}/xcf/${framework}/${simulatorSdk}.xcarchive/Products/Library/Frameworks/${framework}.framework" "./build/${framework}_ciao.framework"
+    cp "${BUILD_DIR}/xcf/${framework}/${simulatorSdk}.xcarchive/Products/Library/Frameworks/${framework}.framework" "./build/${framework}_ciao.framework"
     echo "*** Finished cleaning project ***"
 }
 
