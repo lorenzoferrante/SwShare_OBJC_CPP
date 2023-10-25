@@ -75,16 +75,12 @@ moveFiles() {
     echo "*** Finished moving files ***"
 }
 
-while (( "$#" ));
-do
-    if [ "$action" = "move" ]; then
-        moveFiles
-    elif [ "$action" = "build" ]; then
-        buildFramework
-    elif [ "$action" = "clean" ]; then
-        cleanProject
-    else
-        echo "Operation not permitted"
-    fi
-shift
-done
+if [ "$action" = "move" ]; then
+    moveFiles
+elif [ "$action" = "build" ]; then
+    buildFramework
+elif [ "$action" = "clean" ]; then
+    cleanProject
+else
+    echo "Operation not permitted"
+fi
