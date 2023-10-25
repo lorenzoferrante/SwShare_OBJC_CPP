@@ -29,18 +29,18 @@ buildFramework() {
     cd $workingFolder
     echo $workingFolder
 
-    rm -rf build/
-    mkdir -p $BUILD_DIR
+    sudo rm -rf build/
+    sudo mkdir -p $BUILD_DIR
 
     echo "Building framework..."
 
-    xcodebuild \
+    sudo xcodebuild \
         -workspace "${scheme}.xcodeproj/project.xcworkspace" \
         -scheme $scheme \
         ONLY_ACTIVE_ARCH=NO \
         -sdk iphonesimulator \
         -destination="$simulatorDestination" \
-        -archivePath "${BUILD_DIR}/xcf/${framework}/${simulatorSdk}.xcarchive" \
+        -archivePath "./${simulatorSdk}.xcarchive" \
         -derivedDataPath "./${dataPath}/${framework}" \
         SKIP_INSTALL=NO \
         BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
