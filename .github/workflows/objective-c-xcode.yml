@@ -13,10 +13,10 @@ jobs:
     
     steps:
       - name: Make the script files executable
-        run: chmod +x ./scripts/makeFramework.sh
+        run: chmod +x scripts/makeFramework.sh
       - name: Move File
-        run: ./scripts/makeFramework.sh BLELib2 move
+        run: scripts/makeFramework.sh BLELib2 move
       - name: Build framework
-        run: ./scripts/makeFramework.sh BLELib2 build
+        run: scripts/makeFramework.sh BLELib2 build
       - name: Clean project
-        run: ./scripts/makeFramework.sh BLELib2 clean
+        run: scripts/makeFramework.sh BLELib2 clean
