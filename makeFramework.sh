@@ -5,11 +5,13 @@ simulatorSdk=iphonesimulator
 simulatorDataPath=$BUILD_DIR/$simulatorSdk
 scheme=$1
 framework=$1
+action=$2
 simulatorDestination="iOS Simulator”"
 
 usage="
-$(basename "$0") [scheme]
+$(basename "$0") [scheme] [action]
 Create .frameork from C++ library.
+    action: move, build, clean
     -h show the help text
 "
 
@@ -22,6 +24,7 @@ do
 done
 
 buildFramework() {
+    echo "*** Building framwork ***"
     workingFolder=$( pwd )
     cd $workingFolder
     echo $workingFolder
@@ -42,16 +45,20 @@ buildFramework() {
         archive
 
     echo $( pwd )
+    echo "*** Finished building framwork ***"
 }
 
 cleanProject() {
+    echo "*** Cleaning project ***"
     local projectDir="${scheme}"
     mv "${BUILD_DIR}/xcf/${framework}/${simulatorSdk}.xcarchive/Products/Library/Frameworks/${framework}.framework" "${workingFolder}/build"
     rm -rf $BUILD_DIR
     rm -rf $projectDir
+    echo "*** Finished cleaning project ***"
 }
 
 moveFiles() {
+    echo "*** Moving files ***"
     local projectDir="${scheme}"
     local cppLib="${scheme}_cpp"
 
@@ -66,12 +73,19 @@ moveFiles() {
     done
     cd ..
     cp $cppLib/*.h $projectDir/
+    echo "*** Finished moving files ***"
 }
 
 while (( "$#" ));
 do
-    moveFiles
-    buildFramework
-    cleanProject
+    if [ "$action" = "move" ]; then
+        moveFiles
+    elif [ "$action" = "build" ]; then
+        buildFramework
+    elif [ "$action" = "clean" ]; then
+        cleanProject
+    else
+        echo "Operation not permitted"
+    fi
 shift
 done
