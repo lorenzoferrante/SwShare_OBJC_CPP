@@ -34,7 +34,7 @@ buildFramework() {
 
     echo "Building framework..."
 
-    sudo xcodebuild \
+    xcodebuild \
         -workspace "${scheme}.xcodeproj/project.xcworkspace" \
         -scheme $scheme \
         ONLY_ACTIVE_ARCH=NO \
