@@ -52,9 +52,7 @@ buildFramework() {
 cleanProject() {
     echo "*** Cleaning project ***"
     local projectDir="${scheme}"
-    mv "${BUILD_DIR}/xcf/${framework}/${simulatorSdk}.xcarchive/Products/Library/Frameworks/${framework}.framework" "${workingFolder}/build"
-    rm -rf $BUILD_DIR
-    rm -rf $projectDir
+    mv "./${BUILD_DIR}/xcf/${framework}/${simulatorSdk}.xcarchive/Products/Library/Frameworks/${framework}.framework" "${workingFolder}/build"
     echo "*** Finished cleaning project ***"
 }
 
