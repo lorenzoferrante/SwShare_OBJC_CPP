@@ -312,6 +312,11 @@ uint32_t maketime(t_calendar *t)
     return ((day + t->hour) * i + t->min) * i + t->sec;
 }
 
+char* test_func(void) {
+    char str[] = "TEST FUNC";
+    return *str;
+}
+
 #ifdef __OBJC__
 @end
 #endif

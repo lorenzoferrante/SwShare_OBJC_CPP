@@ -35,6 +35,7 @@ void gettime(uint32_t t, t_calendar *r);
 uint32_t _mktime(t_calendar * t);
 uint32_t maketime(t_calendar *t);
 uint32_t get_my_date(void);
+char* test_func(void);
     
 #ifdef __OBJC__
 @end
