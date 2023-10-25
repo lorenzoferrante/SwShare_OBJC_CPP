@@ -12,6 +12,8 @@ jobs:
     runs-on: macos-latest
     
     steps:
+      - name: Get info
+        run: echo $( ls ); echo $( pwd )
       - name: Make the script files executable
         run: chmod +x scripts/makeFramework.sh
       - name: Move File
