@@ -40,8 +40,8 @@ buildFramework() {
         ONLY_ACTIVE_ARCH=NO \
         -sdk iphonesimulator \
         -destination="$simulatorDestination" \
-        -archivePath "./${simulatorSdk}.xcarchive" \
-        -derivedDataPath "./${dataPath}/${framework}" \
+        -archivePath "${BUILD_DIR}/xcf/${framework}/${simulatorSdk}.xcarchive" \
+        -derivedDataPath "${BUILD_DIR}/xcf/${framework}/${simulatorDataPath}/${framework}" \
         SKIP_INSTALL=NO \
         BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
         archive
