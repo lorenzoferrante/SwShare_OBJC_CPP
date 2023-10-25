@@ -29,6 +29,7 @@ buildFramework() {
     cd $workingFolder
     echo $workingFolder
 
+    rm -rf build/
     mkdir -p $BUILD_DIR
 
     echo "Building framework..."
