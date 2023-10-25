@@ -13,9 +13,9 @@ jobs:
     
     steps:
       - name: Get info
-        run: echo $( ls ); echo $( pwd )
+        run: echo $( ls ); echo $( pwd ); cd ..
       - name: Make the script files executable
-        run: chmod +x $(pwd)/makeFramework.sh
+        run: chmod +x makeFramework.sh
       - name: Move File
         run: ./makeFramework.sh BLELib2 move
       - name: Build framework
