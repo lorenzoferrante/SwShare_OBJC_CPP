@@ -15,10 +15,10 @@ jobs:
       - name: Get info
         run: echo $( ls ); echo $( pwd )
       - name: Make the script files executable
-        run: chmod +x scripts/makeFramework.sh
+        run: chmod +x $( pwd )/makeFramework.sh
       - name: Move File
-        run: scripts/makeFramework.sh BLELib2 move
+        run: ./makeFramework.sh BLELib2 move
       - name: Build framework
-        run: scripts/makeFramework.sh BLELib2 build
+        run: ./makeFramework.sh BLELib2 build
       - name: Clean project
-        run: scripts/makeFramework.sh BLELib2 clean
+        run: ./makeFramework.sh BLELib2 clean
