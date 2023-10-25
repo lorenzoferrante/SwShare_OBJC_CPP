@@ -25,9 +25,12 @@ done
 
 buildFramework() {
     echo "*** Building framwork ***"
-    #workingFolder=$( pwd )
     #cd $workingFolder
     #echo $workingFolder
+
+    cd
+    workingFolder=$( pwd )
+    echo "WORKING FOLDER: ${workingFolder}"
 
     sudo rm -rf build/
     sudo mkdir -p $BUILD_DIR
