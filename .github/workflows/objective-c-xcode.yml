@@ -12,8 +12,7 @@ jobs:
     runs-on: macos-latest
     
     steps:
-      - uses: actions/checkout@v2
-      - name: Get info
+      - uses: actions/checkout@v3
       - name: Make the script files executable
         run: chmod +x ./makeFramework.sh
       - name: Move File
