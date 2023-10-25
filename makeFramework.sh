@@ -37,6 +37,7 @@ buildFramework() {
         -workspace "${scheme}.xcodeproj/project.xcworkspace" \
         -scheme $scheme \
         ONLY_ACTIVE_ARCH=NO \
+        -sdk iphonesimulator \
         -destination="$simulatorDestination" \
         -archivePath "${BUILD_DIR}/xcf/${framework}/${simulatorSdk}.xcarchive" \
         -derivedDataPath "./${dataPath}/${framework}" \
