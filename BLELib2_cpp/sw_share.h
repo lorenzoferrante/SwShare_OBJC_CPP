@@ -121,14 +121,15 @@ typedef enum {
     PACKED COM_CHANNELS_T;
 
 //-----------------------------------------------------------------------------
-typedef enum {
-    COMMAND_NULL,
-    COMMAND_RAW_READ,
-    COMMAND_RAW_WRITE,
-    COMMAND_GET_SET_PARAM,
-    COMMAND_GREETING_MESSAGE,
-}
-    PACKED API_COMMAND_T;
+typedef enum
+{
+	COMMAND_NULL,
+	COMMAND_RAW_READ,
+	COMMAND_RAW_WRITE,
+	COMMAND_GET_SET_PARAM,
+	COMMAND_GREETING_MESSAGE,
+	COMMAND_GET_SET_TIME,
+} PACKED API_COMMAND_T;
 
 //-----------------------------------------------------------------------------
 typedef enum {
@@ -149,131 +150,150 @@ typedef struct {
 //-----------------------------------------------------------------------------
 //QUERIES
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint32_t address;
-    uint16_t byte_number;
-}
-    PACKED raw_read_query_t;
+typedef struct
+{
+	uint32_t									address;
+	uint16_t									byte_number;
+} PACKED raw_read_query_t;
 
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint32_t address;
-    uint16_t byte_number;
-    uint8_t data[];
-}
-    PACKED raw_write_query_t;
+typedef struct
+{
+	uint32_t									address;
+	uint16_t									byte_number;
+	uint8_t									data[];
+} PACKED raw_write_query_t;
 
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint16_t param_num; //numero di parametro
-    uint8_t write; //0=leggi, 1=scrivi
-    uint8_t spare; //mettere a 0
-    uint32_t value; //se write = 1 valore da scrivere nel parametro altrimenti metttere a 0
-    uint8_t spare_1[24]; //serve per portare a 32 byte la query, mettere a 0
-}
-    PACKED get_set_param_query_t;
+typedef struct
+{
+	uint16_t									param_num;		//numero di parametro
+	uint8_t									write;			//0=leggi, 1=scrivi
+	uint8_t									spare;			//mettere a 0
+	uint32_t									value;			//se write = 1 valore da scrivere nel parametro altrimenti metttere a 0
+	uint8_t									spare_1[24];	//serve per portare a 32 byte la query, mettere a 0
+} PACKED get_set_param_query_t;
 
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint8_t spare_1[24]; //serve per portare a 32 byte la query, mettere a 0
-}
-    PACKED greeting_message_query_t;
+typedef struct
+{
+	uint8_t									data[32];
+	uint8_t									spare[32];
+} PACKED greeting_message_query_t;
 
 //-----------------------------------------------------------------------------
-typedef union {
-    uint8_t max_packet[MAX_PACKET_SIZE];
-    raw_read_query_t raw_read;
-    raw_write_query_t raw_write;
-    get_set_param_query_t get_set_param;
-    greeting_message_query_t greeting_message;
-}
-    PACKED generic_queries_t;
+typedef struct
+{
+	uint32_t									time;				//in caso di set riportare il tempo in secondi a partire dal primo gennaio 2000
+	uint8_t									get_set;			//0 = get, 1 = set
+	uint8_t									spare[59];
+} PACKED get_set_time_query_t;
 
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint8_t command; //comando (vedere)
-    uint8_t brand; //brand del dispositivo (0 = DMP)
-    uint16_t spare; //mettere a 0
-    uint32_t timestamp;
-}
-    PACKED query_parameters_t;
+typedef union
+{
+	uint8_t									max_packet[MAX_PACKET_SIZE];
+	raw_read_query_t						raw_read;
+	raw_write_query_t						raw_write;
+	get_set_param_query_t				get_set_param;
+	greeting_message_query_t			greeting_message;
+	get_set_time_query_t					get_set_time;
+} PACKED generic_queries_t;
 
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint16_t crc; //crc dei campi successivi
-    uint16_t number; //numero di byte del solo campo "data" (usato per calcolare il crc)
-    query_parameters_t param;
-    generic_queries_t data;
-}
-    PACKED api_query_t;
+typedef struct
+{
+	uint8_t									command;			//comando (vedere)
+	uint8_t									brand;			//brand del dispositivo (0 = DMP)
+	uint16_t									spare;			//mettere a 0
+	uint32_t									timestamp;
+} PACKED query_parameters_t;
+
+//-----------------------------------------------------------------------------
+typedef struct
+{
+	uint16_t									crc;				//crc dei campi successivi
+	uint16_t									number;			//numero di byte del solo campo "data" (usato per calcolare il crc)
+	query_parameters_t					param;
+	generic_queries_t						data;
+} PACKED api_query_t;
+
 
 //-----------------------------------------------------------------------------
 //ANSWERS
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint16_t number; //numero di byte del solo campo "data"
-    uint8_t data[];
-}
-    PACKED raw_read_answer_t;
+typedef struct
+{
+	uint16_t									number;			//numero di byte del solo campo "data"
+	uint8_t									data[];
+} PACKED raw_read_answer_t;
 
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint32_t dummy;
-}
-    PACKED raw_write_answer_t;
+typedef struct
+{
+	uint32_t									dummy;
+} PACKED raw_write_answer_t;
 
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint32_t value; //se read = 1 sulla query valore del parametro altrimenti 0
-    uint8_t spare_1[28]; //serve per portare a 32 byte l'answer
-}
-    PACKED get_set_param_answer_t;
+typedef struct
+{
+	uint32_t									value;			//se read = 1 sulla query valore del parametro altrimenti 0
+	uint8_t									spare_1[28];	//serve per portare a 32 byte l'answer
+} PACKED get_set_param_answer_t;
 
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint8_t spare_1[24]; //serve per portare a 32 byte la query, mettere a 0
-}
-    PACKED greeting_message_answer_t;
+typedef struct
+{
+	uint8_t									data[32];
+	uint8_t									spare[32];
+} PACKED greeting_message_answer_t;
 
 //-----------------------------------------------------------------------------
-typedef union {
-    uint8_t max_packet[MAX_PACKET_SIZE];
-    raw_read_answer_t raw_read;
-    raw_write_answer_t raw_write;
-    get_set_param_answer_t get_set_param;
-    greeting_message_answer_t greeting_message;
-}
-    PACKED generic_answers_t;
+typedef struct
+{
+	uint32_t									time;				//in caso di get time riporta i secondi trascorsi dal primo gennaio 2000
+	uint8_t									spare[60];
+} PACKED get_set_time_answer_t;
 
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint32_t busy: 1;
-    uint32_t crc_error: 1;
-    uint32_t size_error: 1;
-    uint32_t data_valid: 1;
-    uint32_t date_time_error: 1; //1=errore sulla data-ora (sviluppi futuri)
-    uint32_t encryption_error: 1; //1=errore sulla decriptazione dei dati in arrivo
-    uint32_t spare: 26;
-}
-    PACKED answer_flags_t;
+typedef union
+{
+	uint8_t									max_packet[MAX_PACKET_SIZE];
+	raw_read_answer_t						raw_read;
+	raw_write_answer_t					raw_write;
+	get_set_param_answer_t				get_set_param;
+	greeting_message_answer_t			greeting_message;
+	get_set_time_answer_t				get_set_time;
+} PACKED generic_answers_t;
 
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint8_t negate_command;
-    uint8_t spare_1; //mettere a 0
-    uint16_t spare_2; //mettere a 0
-    answer_flags_t flags;
-}
-    PACKED answer_parameters_t;
+typedef struct
+{
+	uint32_t									busy							:1;
+	uint32_t									crc_error					:1;
+	uint32_t									size_error					:1;
+	uint32_t									data_valid					:1;
+	uint32_t									date_time_error			:1;	//1=errore sulla data-ora (sviluppi futuri)
+	uint32_t									encryption_error			:1;	//1=errore sulla decriptazione dei dati in arrivo
+	uint32_t									spare							:26;
+} PACKED answer_flags_t;
 
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint16_t crc; //crc dei campi successivi
-    uint16_t number; //numero di byte del solo campo "data"
-    answer_parameters_t param;
-    generic_answers_t data;
-}
-    PACKED api_answer_t;
+typedef struct
+{
+	uint8_t									negate_command;
+	uint8_t									spare_1;			//mettere a 0
+	uint16_t									spare_2;			//mettere a 0
+	answer_flags_t							flags;
+} PACKED answer_parameters_t;
 
+//-----------------------------------------------------------------------------
+typedef struct
+{
+	uint16_t									crc;				//crc dei campi successivi
+	uint16_t									number;			//numero di byte del solo campo "data"
+	answer_parameters_t					param;
+	generic_answers_t						data;
+} PACKED api_answer_t;
 
 #endif /* sw_share_h */

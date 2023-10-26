@@ -79,6 +79,15 @@ uint16_t spm[12] =
                 (31+28+31+30+31+30+31+31+30+31+30)
         };
 
+//-----------------------------------------------------------------------------
+//Parametri:
+//query:			puntatore al vettore di query da riempire (valido solo se q=1 altrimenti puo' essere messo a NULL)
+//answer:		puntatore al vettore di answer da processare (valido solo se q=0 altrimenti puo' essere messo a NULL)
+//addr_device:	address del dispositivo al quale fare la lettura grezza
+//quanti:		se q=1 numero di byte da leggere, se q=0 dimensione del vettore di answer (serve per la cancellazione)
+//q: 				1 = preparazione del vettore di query, 0 = analisi del vettore di answer e restituzione dei byte letti sullo stesso vettore di answer
+//return:		se q vale 1 la funzione ritorna il numero di byte da inviare
+//					se q vale 0 la funzione ritorna il numero di byte letti in caso di risposta andata a buon fine, altrimenti un valore negativo
 int32_t
 prepare_data_for_raw_read(api_query_t *query, api_answer_t *answer, uint32_t addr_device, uint16_t quanti,
                                      bool q) {
@@ -112,6 +121,16 @@ prepare_data_for_raw_read(api_query_t *query, api_answer_t *answer, uint32_t add
     }
 }
 
+//-----------------------------------------------------------------------------
+//Parametri:
+//query:			puntatore al vettore di query da riempire (valido solo se q=1 altrimenti puo' essere messo a NULL)
+//answer:		puntatore al vettore di answer da processare (valido solo se q=0 altrimenti puo' essere messo a NULL)
+//data:			buffer contenente i dati da scrivere, se q vale zero puo' essere posto a NULL
+//addr_device:	address del dispositivo al quale fare la scrittura grezza
+//quanti:		se q=1 numero di byte da scrivere, se q=0 non significativo
+//q: 				1 = preparazione del vettore di query con i dati da scrivere, 0 = analisi del vettore di answer
+//return:		se q vale 1 la funzione ritorna il numero di byte da inviare
+//					se q vale 0 la funzione ritorna 0 in caso di risposta andata a buon fine, altrimenti un valore negativo
 int32_t
 prepare_data_for_raw_write(api_query_t *query, api_answer_t *answer, uint8_t *data, uint32_t addr_device,
                                       uint16_t quanti, bool q) {
@@ -139,38 +158,75 @@ prepare_data_for_raw_write(api_query_t *query, api_answer_t *answer, uint8_t *da
     }
 }
 
-int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint16_t param_num, uint32_t value, uint8_t write, uint8_t q) {
-    uint32_t l;
-    if (q)
-    {
-        memset(query, 0, sizeof(api_query_t));
-        query->param.command = COMMAND_GET_SET_PARAM;
-        query->data.get_set_param.param_num = param_num;
-        query->data.get_set_param.value = value;
-        query->data.get_set_param.write = write;
-        query->number = sizeof(get_set_param_query_t);
-        query->param.timestamp = get_my_date();
-        query->crc = crc16(query->number + sizeof(query->number) + sizeof(query->param), (uint8_t *)&query->number);
-        l = sizeof(api_query_t) - sizeof(generic_queries_t) + sizeof(get_set_param_query_t);
-        l = DATA_ENCRYPT((uint8_t *)query, l, (uint8_t *)TEMPORARY_MAIN_PWD, AES_ENC);
-        return l;
-    }
-    else
-    {
-        (void) DATA_ENCRYPT((uint8_t *)answer, answ_size, (uint8_t *)TEMPORARY_MAIN_PWD, AES_DEC);
-        if (answer->param.flags.busy)
-            return -1;
-        uint16_t loc_crc;
-        loc_crc = crc16(answer->number + sizeof(answer->number) + sizeof(answer->param), (uint8_t *)&answer->number);
-        if (loc_crc != answer->crc)
-            return -2;
-        if (write)
-            return 0;
-        else
-            return answer->data.get_set_param.value;
-    }
+//-----------------------------------------------------------------------------
+//Per le chiamae API da c++ bisogna usare quella generica ovvero "prepare_data_for_gen_command"
+//Parametri generici:
+//query:			puntatore al vettore di query da riempire (valido solo se q=1 altrimenti puo' essere messo a NULL)
+//answer:		puntatore al vettore di answer da processare (valido solo se q=0 altrimenti puo' essere messo a NULL)
+//answer_size:	dimensione della risposta, serve solo per la decriptazione
+//q: 				1 = preparazione del vettore di query con i dati da scrivere, 0 = analisi del vettore di answer
+//Parametri specifici:
+//param_num:	numero di parametro da leggere/scrivere
+//value:			se write=1 e q=1 valore da assegnare al parametro, altrimenti non significativo
+//write:			1=scrittura 0=lettura
+//return:		se q=1 la funzione ritorna il numero di byte da inviare
+//					se q=0 e write=0 la funzione ritorna il valore del parametro letto in caso di risposta andata a buon fine, altrimenti un valore negativo
+//					se q=0 e write=1 la funzione ritorna 0 in caso di risposta andata a buon fine, altrimenti un valore negativo
+int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint16_t param_num, uint32_t value, uint8_t write, uint8_t q)
+{
+	int32_t l;
+	if (q)
+	{
+		memset(query, 0, sizeof(api_query_t));
+		query->param.command = COMMAND_GET_SET_PARAM;
+		query->data.get_set_param.param_num = param_num;
+		query->data.get_set_param.value = value;
+		query->data.get_set_param.write = write;
+		query->number = sizeof(get_set_param_query_t);
+		query->param.timestamp = get_my_date();
+		query->crc = crc16(query->number + sizeof(query->number) + sizeof(query->param), (uint8_t *)&query->number);
+		l = sizeof(api_query_t) - sizeof(generic_queries_t) + sizeof(get_set_param_query_t);
+		l = DATA_ENCRYPT((uint8_t *)query, l, (uint8_t *)TEMPORARY_MAIN_PWD, AES_ENC);
+		return l;
+	}
+	else
+	{
+		(void) DATA_ENCRYPT((uint8_t *)answer, answ_size, (uint8_t *)TEMPORARY_MAIN_PWD, AES_DEC);
+		if (answer->param.flags.busy)
+			return -1;
+		uint16_t loc_crc;
+		loc_crc = crc16(answer->number + sizeof(answer->number) + sizeof(answer->param), (uint8_t *)&answer->number);
+		if (loc_crc != answer->crc)
+			return -2;
+		if (write)
+			return 0;
+		else
+			return answer->data.get_set_param.value;
+	}
 }
 
+//-----------------------------------------------------------------------------
+//Parametri generici: per i parametri generici vedere prepare_data_for_get_set_param
+//Parametri specifici: da stabilire, per il momento esistono solo i campo "data_q" e "data_a"
+int32_t prepare_data_for_greeting_message (api_query_t *query, api_answer_t *answer, uint16_t answ_size, char * data_q, char * data_a, uint8_t q)
+{
+	int32_t l;
+	if (q)
+	{
+		memset(query, 0, sizeof(api_query_t));
+		memcpy(query->data.greeting_message.data, data_q, sizeof(query->data.greeting_message.data));
+		l = prepare_data_for_gen_command(query, answer, sizeof(greeting_message_query_t), answ_size, COMMAND_GET_SET_PARAM, q);
+		return l;
+	}
+	else
+	{
+		l = prepare_data_for_gen_command(query, answer, sizeof(greeting_message_query_t), answ_size, COMMAND_GET_SET_PARAM, q);
+		memcpy(data_a, answer->data.greeting_message.data, sizeof(answer->data.greeting_message.data));
+		return l;
+	}
+}
+
+//-----------------------------------------------------------------------------
 int32_t
 prepare_data_for_gen_command(api_query_t *query, api_answer_t *answer, uint16_t size_query,
                                                 uint16_t size_answer, uint8_t command, uint8_t q) {
@@ -198,6 +254,32 @@ prepare_data_for_gen_command(api_query_t *query, api_answer_t *answer, uint16_t 
     }
 }
 
+//-----------------------------------------------------------------------------
+//Parametri generici: per i parametri generici vedere prepare_data_for_get_set_param
+//Parametri specifici:
+//time:		in caso di get la query riporta 0 mentre l'answer restituisce la data ed ora letti
+//				in caso di set la query deve contenere la data ed ora da impostare mentre l'answer restituisce 0
+//get_set:	0 = get, 1 = set
+int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint32_t * time, uint8_t get_set, uint8_t q)
+{
+	int32_t l;
+	if (q)
+	{
+		memset(query, 0, sizeof(api_query_t));
+		query->data.get_set_time.time = *time;
+		query->data.get_set_time.get_set = get_set;
+		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_time_query_t), answ_size, COMMAND_GET_SET_TIME, q);
+		return l;
+	}
+	else
+	{
+		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_time_query_t), answ_size, COMMAND_GET_SET_TIME, q);
+		*time = answer->data.get_set_time.time;
+		return l;
+	}
+}
+
+//-----------------------------------------------------------------------------
 uint8_t isleap(uint8_t year) {
     return ((!(year%4)) && ((year%100) || !(year%400)));
 }
@@ -241,6 +323,7 @@ void gettime(uint32_t t, t_calendar *r) {
     r->day+=work-spm[i2];
 }
 
+//-----------------------------------------------------------------------------
 uint32_t _mktime(t_calendar *t) {
     uint32_t    day;
     uint32_t    i;
@@ -264,6 +347,7 @@ uint32_t _mktime(t_calendar *t) {
     return ((day + t->hour) * i + t->min) * i + t->sec;
 }
 
+//-----------------------------------------------------------------------------
 uint16_t crc16(uint32_t len, uint8_t *buf) {
     uint16_t crc = 0;
     uint32_t i;
@@ -272,6 +356,7 @@ uint16_t crc16(uint32_t len, uint8_t *buf) {
     return (crc);
 }
 
+//-----------------------------------------------------------------------------
 uint32_t get_my_date(void) {
     t_calendar loc_calendar;
     uint32_t loc_time;
@@ -288,6 +373,7 @@ uint32_t get_my_date(void) {
     return loc_time;
 }
 
+//-----------------------------------------------------------------------------
 uint32_t maketime(t_calendar *t)
 {
     uint32_t day;
@@ -312,10 +398,12 @@ uint32_t maketime(t_calendar *t)
     return ((day + t->hour) * i + t->min) * i + t->sec;
 }
 
+#ifndef __SOFTWARE__
 char* test_func(void) {
     char str[] = "TEST FUNC";
     return *str;
 }
+#endif
 
 #ifdef __OBJC__
 @end
