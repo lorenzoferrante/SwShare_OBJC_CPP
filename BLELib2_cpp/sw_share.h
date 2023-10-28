@@ -17,33 +17,6 @@
 //-----------------------------------------------------------------------------
 #define PACKED __attribute__((packed, aligned(1)))
 #define MAX_PACKET_SIZE (1024)
-#define TIMING_BUDGET_uS (20000)
-#define INTER_MEASUREMENT_mS (80)
-#define CMP_MAX_DISTANZA (1100)
-#define TEMPO_SISTEMA (100)
-#define SYS_MS (x) (x / TEMPO_SISTEMA) //macro per i timers SYS
-#define CALIBRAZIONE (40000)
-#define TEMPO_ANTI_RIMBALZO (1000) //filtro anti rimbalzo alla chiusura in ms
-
-//i2c
-#define I2C_MASTER_NUM (0) /*!< I2C master i2c port number, the number of i2c peripheral interfaces available will depend on the chip */
-#define I2C_MASTER_SCL_IO PIN_I2C_MASTER_SCL /*!< GPIO number used for I2C master clock */
-#define I2C_MASTER_SDA_IO PIN_I2C_MASTER_SDA /*!< GPIO number used for I2C master data  */
-#define I2C_MASTER_FREQ_HZ (100000) /*!< I2C master clock frequency */
-#define I2C_MASTER_TX_BUF_DISABLE (0) /*!< I2C master doesn't need buffer */
-#define I2C_MASTER_RX_BUF_DISABLE (0) /*!< I2C master doesn't need buffer */
-#define VL53L1_SENSOR_ADDRESS (0x52 >> 1) //shift right di un bit in quanto la funzione di invio effettua nuovamente lo shift left
-
-//pin
-#define PIN_I2C_MASTER_SCL (6)
-#define PIN_I2C_MASTER_SDA (5)
-#define PIN_LED (2)
-#define PIN_XSHUT (7)
-
-#define PIN_K1 (8)
-#define PIN_K2 (10)
-#define PIN_K3 (9)
-#define PIN_K4 (4)
 
 typedef uint16_t tempo_tw;
 
@@ -138,14 +111,6 @@ typedef enum {
     N_PARAMETERS,
 }
     PACKED PARAMETERS_T;
-
-//-----------------------------------------------------------------------------
-//timers a word a 30ms
-typedef struct {
-    tempo_tw ANTI_ALLAGAMENTO;
-    tempo_tw ANTI_RIMBALZO;
-}
-    PACKED t_sysw_timers;
 
 //-----------------------------------------------------------------------------
 //QUERIES
