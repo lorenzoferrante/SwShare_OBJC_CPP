@@ -398,7 +398,7 @@ uint32_t maketime(t_calendar *t)
     return ((day + t->hour) * i + t->min) * i + t->sec;
 }
 
-#ifndef __SOFTWARE__
+#if !defined(__SOFTWARE__) && !defined(__IS_APPLICATION__)
 char* test_func(void) {
     char str[] = "TEST FUNC";
     return *str;
