@@ -182,24 +182,14 @@ int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer
 		query->data.get_set_param.param_num = param_num;
 		query->data.get_set_param.value = value;
 		query->data.get_set_param.write = write;
-		query->number = sizeof(get_set_param_query_t);
-		query->param.timestamp = get_my_date();
-		query->crc = crc16(query->number + sizeof(query->number) + sizeof(query->param), (uint8_t *)&query->number);
-		l = sizeof(api_query_t) - sizeof(generic_queries_t) + sizeof(get_set_param_query_t);
-		l = DATA_ENCRYPT((uint8_t *)query, l, (uint8_t *)TEMPORARY_MAIN_PWD, AES_ENC);
+		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_param_query_t), answ_size, COMMAND_GET_SET_PARAM, q);
 		return l;
 	}
 	else
 	{
-		(void) DATA_ENCRYPT((uint8_t *)answer, answ_size, (uint8_t *)TEMPORARY_MAIN_PWD, AES_DEC);
-		if (answer->param.flags.busy)
-			return -1;
-		uint16_t loc_crc;
-		loc_crc = crc16(answer->number + sizeof(answer->number) + sizeof(answer->param), (uint8_t *)&answer->number);
-		if (loc_crc != answer->crc)
-			return -2;
-		if (write)
-			return 0;
+		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_param_query_t), answ_size, COMMAND_GET_SET_PARAM, q);
+		if (l < 0)
+			return l;
 		else
 			return answer->data.get_set_param.value;
 	}
