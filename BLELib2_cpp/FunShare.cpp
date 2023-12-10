@@ -164,7 +164,7 @@ prepare_data_for_raw_write(api_query_t *query, api_answer_t *answer, uint8_t *da
 //query:			puntatore al vettore di query da riempire (valido solo se q=1 altrimenti puo' essere messo a NULL)
 //answer:		puntatore al vettore di answer da processare (valido solo se q=0 altrimenti puo' essere messo a NULL)
 //answer_size:	dimensione della risposta, serve solo per la decriptazione
-//q: 				1 = preparazione del vettore di query con i dati da scrivere, 0 = analisi del vettore di answer
+//q: 				0 = analisi del vettore di answer, 1 = preparazione del vettore di query con i dati da scrivere, 2 = calcolo dati da ricevere
 //Parametri specifici:
 //param_num:	numero di parametro da leggere/scrivere
 //value:			se write=1 e q=1 valore da assegnare al parametro, altrimenti non significativo
@@ -175,7 +175,7 @@ prepare_data_for_raw_write(api_query_t *query, api_answer_t *answer, uint8_t *da
 int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint16_t param_num, uint32_t value, uint8_t write, uint8_t q)
 {
 	int32_t l;
-	if (q)
+	if (q == 1)
 	{
 		memset(query, 0, sizeof(api_query_t));
 		query->param.command = COMMAND_GET_SET_PARAM;
@@ -185,13 +185,23 @@ int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer
 		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_param_query_t), answ_size, COMMAND_GET_SET_PARAM, q);
 		return l;
 	}
-	else
+	else if (q == 0)
 	{
 		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_param_query_t), answ_size, COMMAND_GET_SET_PARAM, q);
 		if (l < 0)
 			return l;
 		else
 			return answer->data.get_set_param.value;
+	}
+	else
+	{
+		//calcolo il numero di byte da ricevere
+		int32_t k = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(get_set_param_answer_t);
+#if CMP_CRIPTAZIONE
+		//se sto utilizzando la criptazione devo sommare anche i caratteri necessari a farmi arrivare ad un numero divisibile per 16
+		k += ENC_KEY_LENGTH - (k % ENC_KEY_LENGTH);
+#endif
+		return k;
 	}
 }
 
@@ -221,7 +231,7 @@ int32_t
 prepare_data_for_gen_command(api_query_t *query, api_answer_t *answer, uint16_t size_query,
                                                 uint16_t size_answer, uint8_t command, uint8_t q) {
     int32_t l;
-    if (q)
+	 if (q == 1)
     {
         query->param.command = command;
         query->number = size_query;
@@ -231,7 +241,7 @@ prepare_data_for_gen_command(api_query_t *query, api_answer_t *answer, uint16_t 
         l = DATA_ENCRYPT((uint8_t *)query, l, (uint8_t *)TEMPORARY_MAIN_PWD, AES_ENC);
         return l;
     }
-    else
+	 else if (q == 0)
     {
         (void) DATA_ENCRYPT((uint8_t *)answer, size_answer, (uint8_t *)TEMPORARY_MAIN_PWD, AES_DEC);
         if (answer->param.flags.busy)
@@ -242,6 +252,14 @@ prepare_data_for_gen_command(api_query_t *query, api_answer_t *answer, uint16_t 
             return -2;
         return 0;
     }
+	 else
+	 {
+		 int k = sizeof(api_answer_t) - sizeof(generic_answers_t) + size_answer;
+	 #if CMP_CRIPTAZIONE
+		 k += ENC_KEY_LENGTH - (k % ENC_KEY_LENGTH);
+	 #endif
+		 return k;
+	 }
 }
 
 //-----------------------------------------------------------------------------
