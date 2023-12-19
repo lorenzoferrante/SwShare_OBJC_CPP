@@ -107,7 +107,8 @@ typedef enum
 //-----------------------------------------------------------------------------
 typedef enum {
     PARAMETER_SENSITIVITY,
-    PARAMETER_FLUSH_TIME,
+	 PARAMETER_FLUSH_TIME_SHORT,
+	 PARAMETER_FLUSH_TIME_LONG,
     N_PARAMETERS,
 }
     PACKED PARAMETERS_T;
