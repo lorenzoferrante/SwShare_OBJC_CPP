@@ -212,6 +212,36 @@ int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer
 }
 
 //-----------------------------------------------------------------------------
+int32_t prepare_data_for_devices_onboard (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint8_t device, uint8_t attivazione, uint8_t q)
+{
+	int32_t l;
+	if (q == 1)
+	{
+		memset(query, 0, sizeof(api_query_t));
+		query->param.command = COMMAND_DEVICES_ONBOARD;
+		query->data.devices_onboard.device = device;
+		query->data.devices_onboard.attivazione = attivazione;
+		l = prepare_data_for_gen_command(query, answer, sizeof(devices_onboard_query_t), answ_size, COMMAND_DEVICES_ONBOARD, q);
+		return l;
+	}
+	else if (q == 0)
+	{
+		l = prepare_data_for_gen_command(query, answer, sizeof(devices_onboard_query_t), answ_size, COMMAND_DEVICES_ONBOARD, q);
+			return l;
+	}
+	else
+	{
+		//calcolo il numero di byte da ricevere
+		int32_t k = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(devices_onboard_answer_t);
+#if CMP_CRIPTAZIONE
+		//se sto utilizzando la criptazione devo sommare anche i caratteri necessari a farmi arrivare ad un numero divisibile per 16
+		k += ENC_KEY_LENGTH - (k % ENC_KEY_LENGTH);
+#endif
+		return k;
+	}
+}
+
+//-----------------------------------------------------------------------------
 //Parametri generici: per i parametri generici vedere prepare_data_for_get_set_param
 //Parametri specifici: da stabilire, per il momento esistono solo i campo "data_q" e "data_a"
 int32_t prepare_data_for_greeting_message (api_query_t *query, api_answer_t *answer, uint16_t answ_size, char * data_q, char * data_a, uint8_t q)

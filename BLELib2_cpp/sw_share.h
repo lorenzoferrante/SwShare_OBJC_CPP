@@ -102,6 +102,7 @@ typedef enum
 	COMMAND_GET_SET_PARAM,
 	COMMAND_GREETING_MESSAGE,
 	COMMAND_GET_SET_TIME,
+	COMMAND_DEVICES_ONBOARD,
 } PACKED API_COMMAND_T;
 
 //-----------------------------------------------------------------------------
@@ -156,6 +157,14 @@ typedef struct
 } PACKED get_set_time_query_t;
 
 //-----------------------------------------------------------------------------
+typedef struct
+{
+	uint8_t									device;			//0=led, 1=elettrovalvola
+	uint8_t									attivazione;	//0=lampeggiante, 1=fissa, 0xfe=fine attivazione device 0xff fine di tutte le attivazioni
+	uint8_t									spare[62];
+} PACKED devices_onboard_query_t;
+
+//-----------------------------------------------------------------------------
 typedef union
 {
 	uint8_t									max_packet[MAX_PACKET_SIZE];
@@ -164,6 +173,7 @@ typedef union
 	get_set_param_query_t				get_set_param;
 	greeting_message_query_t			greeting_message;
 	get_set_time_query_t					get_set_time;
+	devices_onboard_query_t				devices_onboard;
 } PACKED generic_queries_t;
 
 //-----------------------------------------------------------------------------
@@ -222,6 +232,12 @@ typedef struct
 } PACKED get_set_time_answer_t;
 
 //-----------------------------------------------------------------------------
+typedef struct
+{
+	uint8_t									spare[64];
+} PACKED devices_onboard_answer_t;
+
+//-----------------------------------------------------------------------------
 typedef union
 {
 	uint8_t									max_packet[MAX_PACKET_SIZE];
@@ -230,6 +246,7 @@ typedef union
 	get_set_param_answer_t				get_set_param;
 	greeting_message_answer_t			greeting_message;
 	get_set_time_answer_t				get_set_time;
+	devices_onboard_answer_t			devices_onboard;
 } PACKED generic_answers_t;
 
 //-----------------------------------------------------------------------------
