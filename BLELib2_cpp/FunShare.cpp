@@ -88,37 +88,40 @@ uint16_t spm[12] =
 //q: 				1 = preparazione del vettore di query, 0 = analisi del vettore di answer e restituzione dei byte letti sullo stesso vettore di answer
 //return:		se q vale 1 la funzione ritorna il numero di byte da inviare
 //					se q vale 0 la funzione ritorna il numero di byte letti in caso di risposta andata a buon fine, altrimenti un valore negativo
-int32_t
-prepare_data_for_raw_read(api_query_t *query, api_answer_t *answer, uint32_t addr_device, uint16_t quanti,
-                                     bool q) {
-    if (q)
-    {
-        memset(query, 0, sizeof(api_query_t));
-        query->param.command = COMMAND_RAW_READ;
-        query->data.raw_read.address = addr_device;
-        query->data.raw_read.byte_number = quanti;
-        query->number = sizeof(raw_read_query_t);
-        query->param.timestamp = get_my_date();
-        query->crc = crc16(query->number + sizeof(query->number) + sizeof(query->param), (uint8_t *)&query->number);
-        return sizeof(api_query_t) - sizeof(generic_queries_t) + sizeof(raw_read_query_t);
-    }
-    else
-    {
-        if (answer->param.flags.busy)
-            return -1;
-        uint16_t loc_crc;
-        loc_crc = crc16(answer->number + sizeof(answer->number) + sizeof(answer->param), (uint8_t *)&answer->number);
-        if (loc_crc != answer->crc)
-            return -2;
-        uint16_t num = answer->data.raw_read.number;
-        if ((num > MAX_NUM_READ_WRITE) || (num > MAX_MTU))
-            return -3;
-        uint8_t loc_result[num];
-        memcpy(loc_result, answer->data.raw_read.data, num);
-        memset(answer, 0, quanti);
-        memcpy(answer, loc_result, num);
-        return num;
-    }
+int32_t prepare_data_for_raw_read (api_query_t *query, api_answer_t *answer, uint32_t addr_device, uint16_t quanti, bool q)
+{
+	int32_t l;
+	if (q)
+	{
+		memset(query, 0, sizeof(api_query_t));
+		query->param.command = COMMAND_RAW_READ;
+		query->data.raw_read.address = addr_device;
+		query->data.raw_read.byte_number = quanti;
+		query->number = sizeof(raw_read_query_t);
+		query->param.timestamp = get_my_date();
+		query->crc = crc16(query->number + sizeof(query->number) + sizeof(query->param), (uint8_t *)&query->number);
+		l = sizeof(api_query_t) - sizeof(generic_queries_t) + sizeof(raw_read_query_t);
+		l = DATA_ENCRYPT((uint8_t *)query, l, (uint8_t *)TEMPORARY_MAIN_PWD, AES_ENC);
+		return l;
+	}
+	else
+	{
+		l = DATA_ENCRYPT((uint8_t *)answer, quanti, (uint8_t *)TEMPORARY_MAIN_PWD, AES_DEC);
+		if (answer->param.flags.busy)
+			return -1;
+		uint16_t loc_crc;
+		loc_crc = crc16(answer->number + sizeof(answer->number) + sizeof(answer->param), (uint8_t *)&answer->number);
+		if (loc_crc != answer->crc)
+			return -2;
+		uint16_t num = answer->data.raw_read.number;
+		if ((num > MAX_NUM_READ_WRITE) || (num > MAX_MTU))
+			return -3;
+		uint8_t loc_result[num];
+		memcpy(loc_result, answer->data.raw_read.data, num);
+		memset(answer, 0, l);
+		memcpy(answer, loc_result, num);
+		return num;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -131,31 +134,34 @@ prepare_data_for_raw_read(api_query_t *query, api_answer_t *answer, uint32_t add
 //q: 				1 = preparazione del vettore di query con i dati da scrivere, 0 = analisi del vettore di answer
 //return:		se q vale 1 la funzione ritorna il numero di byte da inviare
 //					se q vale 0 la funzione ritorna 0 in caso di risposta andata a buon fine, altrimenti un valore negativo
-int32_t
-prepare_data_for_raw_write(api_query_t *query, api_answer_t *answer, uint8_t *data, uint32_t addr_device,
-                                      uint16_t quanti, bool q) {
-    if (q)
-    {
-        memset(query, 0, sizeof(api_query_t));
-        query->param.command = COMMAND_RAW_WRITE;
-        query->data.raw_write.address = addr_device;
-        query->data.raw_write.byte_number = quanti;
-        query->number = sizeof(raw_write_query_t) + quanti;
-        query->param.timestamp = get_my_date();
-        memcpy (query->data.raw_write.data, data, quanti);
-        query->crc = crc16(query->number + sizeof(query->number) + sizeof(query->param), (uint8_t *)&query->number);
-        return sizeof(api_query_t) - sizeof(generic_queries_t) + sizeof(raw_write_query_t) + quanti;
-    }
-    else
-    {
-        if (answer->param.flags.busy)
-            return -1;
-        uint16_t loc_crc;
-        loc_crc = crc16(answer->number + sizeof(answer->number) + sizeof(answer->param), (uint8_t *)&answer->number);
-        if (loc_crc != answer->crc)
-            return -2;
-        return 0;
-    }
+int32_t prepare_data_for_raw_write (api_query_t *query, api_answer_t *answer, uint8_t * data, uint32_t addr_device, uint16_t quanti, bool q)
+{
+	int32_t l;
+	if (q)
+	{
+		memset(query, 0, sizeof(api_query_t));
+		query->param.command = COMMAND_RAW_WRITE;
+		query->data.raw_write.address = addr_device;
+		query->data.raw_write.byte_number = quanti;
+		query->number = sizeof(raw_write_query_t) + quanti;
+		query->param.timestamp = get_my_date();
+		memcpy (query->data.raw_write.data, data, quanti);
+		query->crc = crc16(query->number + sizeof(query->number) + sizeof(query->param), (uint8_t *)&query->number);
+		l = sizeof(api_query_t) - sizeof(generic_queries_t) + sizeof(raw_write_query_t) + quanti;
+		l = DATA_ENCRYPT((uint8_t *)query, l, (uint8_t *)TEMPORARY_MAIN_PWD, AES_ENC);
+		return l;
+	}
+	else
+	{
+		(void) DATA_ENCRYPT((uint8_t *)answer, quanti, (uint8_t *)TEMPORARY_MAIN_PWD, AES_DEC);
+		if (answer->param.flags.busy)
+			return -1;
+		uint16_t loc_crc;
+		loc_crc = crc16(answer->number + sizeof(answer->number) + sizeof(answer->param), (uint8_t *)&answer->number);
+		if (loc_crc != answer->crc)
+			return -2;
+		return 0;
+	}
 }
 
 //-----------------------------------------------------------------------------
