@@ -34,64 +34,93 @@ typedef uint16_t tempo_tw;
 
 //-----------------------------------------------------------------------------
 // struttura calendario
-#define SPD (86400) // Secondi in un giorno.
-#define MAGIC_WDAY 6 // il 1 gennaio 2000 era un sabato.
-#define MAGIC_YEAR 2000
-#define MAGIC_PREF 2000
-#define MAGIC_SUFF 0
+#define SPD														(86400)	// Secondi in un giorno.
+#define MAGIC_WDAY											(6)		// il 1 gennaio 2000 era un sabato.
+#define MAGIC_YEAR											(2000)
+#define MAGIC_PREF											(2000)
+#define MAGIC_SUFF											(0)
 
 //-----------------------------------------------------------------------------
 typedef uint8_t return_type_aes;
 typedef uint8_t length_type_aes;
 
-#define ENC_KEY_LENGTH (16)
-#define N_ROW_AES (4)
-#define N_COL_AES (4)
-#define N_BLOCK_AES (ENC_KEY_LENGTH)
-#define N_MAX_ROUNDS_AES (14)
+#define ENC_KEY_LENGTH										(16)
+#define N_ROW_AES												(4)
+#define N_COL_AES												(4)
+#define N_BLOCK_AES											(ENC_KEY_LENGTH)
+#define N_MAX_ROUNDS_AES									(14)
+#define N_PARAM_HIDDEN_LOGGER								(4)
+#define N_HIDDEN_LOGGER										(200)
+#define BASE_ADDR_READ_PARAMETERS						(0xfff00000)
+#define BASE_ADDR_READ_LOGGER								(0xfff10000)
 
 //-----------------------------------------------------------------------------
-typedef enum {
-    AES_ENC,
-    AES_DEC
+typedef enum
+{
+	HL_EV_AVVIO_DISPOSITIVO,
+	N_HL_EVT_TYPE,
+} PACKED T_HL_EVENTS;
+
+//-----------------------------------------------------------------------------
+typedef enum
+{
+	AES_ENC,
+	AES_DEC
 }
-        aes_mode_t;
+aes_mode_t;
+
+//-----------------------------------------------------------------------------
+typedef struct
+{
+	uint8_t ksch[(N_MAX_ROUNDS_AES + 1) * N_BLOCK_AES];
+	uint8_t rnd;
+}
+aes_context;
+
+//-----------------------------------------------------------------------------
+typedef struct t_param
+{
+	uint32_t minimo;
+	uint32_t fabbrica;
+	uint32_t massimo;
+} t_param;
 
 //-----------------------------------------------------------------------------
 typedef struct {
-    uint8_t ksch[(N_MAX_ROUNDS_AES + 1) * N_BLOCK_AES];
-    uint8_t rnd;
-}
-        aes_context;
+	uint8_t sec;				// Secondi [0-59]
+	uint8_t min;				// Minuti  [0-59]
+	uint8_t hour;				// Ore     [0-23]
+	uint8_t day;				// Giorni  [1-31]
+	uint8_t mon;				// Mese    [0-11]
+	uint8_t year;				// Anno    [0-135]
+	uint8_t wday;				// giorno  [0-6] 0=Dom 1=Lun]
+	uint8_t mode;				// MODE_ITA, MODE_USA, MODE_ISO
+} t_calendar;
 
 //-----------------------------------------------------------------------------
-typedef struct t_param {
-    uint32_t minimo;
-    uint32_t fabbrica;
-    uint32_t massimo;
-}
-        t_param;
+typedef struct
+{
+	uint16_t		evento;
+	uint32_t		date_time;
+	uint32_t		parametri[N_PARAM_HIDDEN_LOGGER];
+} PACKED t_hd_log_element;
 
 //-----------------------------------------------------------------------------
-typedef struct {
-    uint8_t sec; // Secondi [0-59]
-    uint8_t min; // Minuti  [0-59]
-    uint8_t hour; // Ore     [0-23]
-    uint8_t day; // Giorni  [1-31]
-    uint8_t mon; // Mese    [0-11]
-    uint8_t year; // Anno    [0-135]
-    uint8_t wday; // giorno  [0-6] 0=Dom 1=Lun]
-    uint8_t mode; // MODE_ITA, MODE_USA, MODE_ISO
-}
-        t_calendar;
+typedef struct
+{
+	t_hd_log_element	logger[N_HIDDEN_LOGGER];
+	uint16_t				index;
+	uint8_t				ricircolo;
+	uint8_t				free;
+} PACKED t_hidden_logger;
 
 //-----------------------------------------------------------------------------
-typedef enum {
-    COM_CHANNEL_BLE,
-    COM_CHANNEL_SERIAL,
-    N_COM_CHANNEL,
-}
-    PACKED COM_CHANNELS_T;
+typedef enum
+{
+	COM_CHANNEL_BLE,
+	COM_CHANNEL_SERIAL,
+	N_COM_CHANNEL,
+} PACKED COM_CHANNELS_T;
 
 //-----------------------------------------------------------------------------
 typedef enum
@@ -106,13 +135,33 @@ typedef enum
 } PACKED API_COMMAND_T;
 
 //-----------------------------------------------------------------------------
-typedef enum {
-    PARAMETER_SENSITIVITY,
-	 PARAMETER_FLUSH_TIME_SHORT,
-	 PARAMETER_FLUSH_TIME_LONG,
-    N_PARAMETERS,
-}
-    PACKED PARAMETERS_T;
+typedef enum
+{
+	PARAMETER_SENSITIVITY,
+	PARAMETER_FLUSH_TIME_SHORT,
+	PARAMETER_FLUSH_TIME_LONG,
+	PARAMETER_AVAILABLE_1,
+	PARAMETER_AVAILABLE_2,
+	PARAMETER_AVAILABLE_3,
+	PARAMETER_AVAILABLE_4,
+	PARAMETER_AVAILABLE_5,
+	PARAMETER_AVAILABLE_6,
+	PARAMETER_AVAILABLE_7,
+	PARAMETER_AVAILABLE_8,
+	PARAMETER_AVAILABLE_9,
+	PARAMETER_AVAILABLE_10,
+	PARAMETER_AVAILABLE_11,
+	PARAMETER_AVAILABLE_12,
+	PARAMETER_AVAILABLE_13,
+	PARAMETER_AVAILABLE_14,
+	PARAMETER_AVAILABLE_15,
+	PARAMETER_AVAILABLE_16,
+	PARAMETER_AVAILABLE_17,
+	PARAMETER_AVAILABLE_18,
+	PARAMETER_AVAILABLE_19,
+	PARAMETER_AVAILABLE_20,
+	N_PARAMETERS,
+} PACKED PARAMETERS_T;
 
 //-----------------------------------------------------------------------------
 //QUERIES
