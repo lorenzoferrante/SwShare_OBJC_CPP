@@ -58,6 +58,8 @@ typedef uint8_t length_type_aes;
 typedef enum
 {
 	HL_EV_AVVIO_DISPOSITIVO,
+	HL_EV_IMPOSTATO_PARAMETRO,
+	HL_EV_IMPOSTATA_DATA_ORA,
 	N_HL_EVT_TYPE,
 } PACKED T_HL_EVENTS;
 

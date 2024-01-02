@@ -263,9 +263,8 @@ int32_t prepare_data_for_greeting_message (api_query_t *query, api_answer_t *ans
 }
 
 //-----------------------------------------------------------------------------
-int32_t
-prepare_data_for_gen_command(api_query_t *query, api_answer_t *answer, uint16_t size_query,
-                                                uint16_t size_answer, uint8_t command, uint8_t q) {
+int32_t prepare_data_for_gen_command(api_query_t *query, api_answer_t *answer, uint16_t size_query, uint16_t size_answer, uint8_t command, uint8_t q)
+{
     int32_t l;
 	 if (q == 1)
     {
@@ -307,7 +306,7 @@ prepare_data_for_gen_command(api_query_t *query, api_answer_t *answer, uint16_t 
 int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint32_t * time, uint8_t get_set, uint8_t q)
 {
 	int32_t l;
-	if (q)
+	if (q == 1)
 	{
 		memset(query, 0, sizeof(api_query_t));
 		query->data.get_set_time.time = *time;
@@ -315,11 +314,19 @@ int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer,
 		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_time_query_t), answ_size, COMMAND_GET_SET_TIME, q);
 		return l;
 	}
-	else
+	else if (q == 0)
 	{
 		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_time_query_t), answ_size, COMMAND_GET_SET_TIME, q);
 		*time = answer->data.get_set_time.time;
 		return l;
+	}
+	else
+	{
+		int k = sizeof(api_answer_t) - sizeof(generic_answers_t) + answ_size;
+	#if CMP_CRIPTAZIONE
+		k += ENC_KEY_LENGTH - (k % ENC_KEY_LENGTH);
+	#endif
+		return k;
 	}
 }
 
