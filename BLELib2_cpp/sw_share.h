@@ -29,8 +29,9 @@ typedef uint16_t tempo_tw;
 
 //-----------------------------------------------------------------------------
 //definizioni generiche
-#define MAX_NUM_READ_WRITE (128)
-#define MAX_MTU (128)
+#define MAX_NUM_READ_WRITE 								(128)
+#define MAX_MTU 												(128)
+#define N_QUEUE_HD_LOGGER									(5)
 
 //-----------------------------------------------------------------------------
 // struttura calendario
