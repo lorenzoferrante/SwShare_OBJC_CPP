@@ -62,6 +62,7 @@ typedef enum
 	HL_EV_IMPOSTATO_PARAMETRO,
 	HL_EV_IMPOSTATA_DATA_ORA,
 	N_HL_EVT_TYPE,
+	HL_EV_CANCELLA_LOGGER = 0xff,
 } PACKED T_HL_EVENTS;
 
 //-----------------------------------------------------------------------------
@@ -211,7 +212,7 @@ typedef struct
 //-----------------------------------------------------------------------------
 typedef struct
 {
-	uint8_t									device;			//0=led, 1=elettrovalvola
+	uint8_t									device;			//0=led, 1=elettrovalvola, 0xff=cancellazione logger
 	uint8_t									attivazione;	//0=lampeggiante, 1=fissa, 0xfe=fine attivazione device 0xff fine di tutte le attivazioni
 	uint8_t									spare[62];
 } PACKED devices_onboard_query_t;
