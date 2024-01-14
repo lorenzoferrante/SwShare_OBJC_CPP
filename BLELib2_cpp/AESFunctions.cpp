@@ -565,9 +565,7 @@ return_type_aes
 #else
 uint32_t data_encrypt(unsigned char *ptr, uint32_t len, unsigned char *key, aes_mode_t mode) {
 #endif
-#if !defined(__NEXUS_PLUS__) && !defined(__MENTOR_BUS__)
     aes_context ctx;
-#endif
     unsigned char iv[ENC_KEY_LENGTH];
     uint32_t l;
     int i;

@@ -169,7 +169,6 @@ int32_t prepare_data_for_raw_write (api_query_t *query, api_answer_t *answer, ui
 //Parametri generici:
 //query:			puntatore al vettore di query da riempire (valido solo se q=1 altrimenti puo' essere messo a NULL)
 //answer:		puntatore al vettore di answer da processare (valido solo se q=0 altrimenti puo' essere messo a NULL)
-//answer_size:	dimensione della risposta, serve solo per la decriptazione
 //q: 				0 = analisi del vettore di answer, 1 = preparazione del vettore di query con i dati da scrivere, 2 = calcolo dati da ricevere
 //Parametri specifici:
 //param_num:	numero di parametro da leggere/scrivere
@@ -182,6 +181,11 @@ int32_t prepare_data_for_raw_write (api_query_t *query, api_answer_t *answer, ui
 int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint16_t param_num, uint32_t value, uint8_t write, uint8_t q)
 {
 	int32_t l;
+	int32_t attesi = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(get_set_param_answer_t);
+	(void) answ_size;
+#if CMP_CRIPTAZIONE
+	attesi += ENC_KEY_LENGTH - (attesi % ENC_KEY_LENGTH);
+#endif
 	if (q == 1)
 	{
 		memset(query, 0, sizeof(api_query_t));
@@ -189,27 +193,19 @@ int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer
 		query->data.get_set_param.param_num = param_num;
 		query->data.get_set_param.value = value;
 		query->data.get_set_param.write = write;
-		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_param_query_t), answ_size, COMMAND_GET_SET_PARAM, q);
+		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_param_query_t), sizeof(get_set_param_answer_t), COMMAND_GET_SET_PARAM, q);
 		return l;
 	}
 	else if (q == 0)
 	{
-		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_param_query_t), answ_size, COMMAND_GET_SET_PARAM, q);
+		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_param_query_t), attesi, COMMAND_GET_SET_PARAM, q);
 		if (l < 0)
 			return l;
 		else
 			return answer->data.get_set_param.value;
 	}
 	else
-	{
-		//calcolo il numero di byte da ricevere
-		int32_t k = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(get_set_param_answer_t);
-#if CMP_CRIPTAZIONE
-		//se sto utilizzando la criptazione devo sommare anche i caratteri necessari a farmi arrivare ad un numero divisibile per 16
-		k += ENC_KEY_LENGTH - (k % ENC_KEY_LENGTH);
-#endif
-		return k;
-	}
+		return attesi;
 }
 
 //-----------------------------------------------------------------------------
@@ -220,54 +216,56 @@ int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer
 //return:		se q=0 la funzione ritorna 0 se il vettore di answer e' composto correttamente, altrimenti un valore negativo
 //					se q=1 la funzione ritorna il numero di byte da inviare
 //					se q=2 la funzione ritorna il numero di byte che il dispositivo deve rispondere dopo la chiamata
-int32_t prepare_data_for_devices_onboard (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint8_t device, uint8_t attivazione, uint8_t q)
+int32_t prepare_data_for_devices_onboard (api_query_t *query, api_answer_t *answer, uint8_t device, uint8_t attivazione, uint8_t q)
 {
 	int32_t l;
+	int32_t attesi = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(devices_onboard_answer_t);
+#if CMP_CRIPTAZIONE
+	attesi += ENC_KEY_LENGTH - (attesi % ENC_KEY_LENGTH);
+#endif
 	if (q == 1)
 	{
 		memset(query, 0, sizeof(api_query_t));
 		query->param.command = COMMAND_DEVICES_ONBOARD;
 		query->data.devices_onboard.device = device;
 		query->data.devices_onboard.attivazione = attivazione;
-		l = prepare_data_for_gen_command(query, answer, sizeof(devices_onboard_query_t), answ_size, COMMAND_DEVICES_ONBOARD, q);
+		l = prepare_data_for_gen_command(query, answer, sizeof(devices_onboard_query_t), sizeof(devices_onboard_answer_t), COMMAND_DEVICES_ONBOARD, q);
 		return l;
 	}
 	else if (q == 0)
 	{
-		l = prepare_data_for_gen_command(query, answer, sizeof(devices_onboard_query_t), answ_size, COMMAND_DEVICES_ONBOARD, q);
+		l = prepare_data_for_gen_command(query, answer, sizeof(devices_onboard_query_t), attesi, COMMAND_DEVICES_ONBOARD, q);
 			return l;
 	}
 	else
-	{
-		//calcolo il numero di byte da ricevere
-		int32_t k = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(devices_onboard_answer_t);
-#if CMP_CRIPTAZIONE
-		//se sto utilizzando la criptazione devo sommare anche i caratteri necessari a farmi arrivare ad un numero divisibile per 16
-		k += ENC_KEY_LENGTH - (k % ENC_KEY_LENGTH);
-#endif
-		return k;
-	}
+		return attesi;
 }
 
 //-----------------------------------------------------------------------------
 //Parametri generici: per i parametri generici vedere "prepare_data_for_get_set_param"
 //Parametri specifici: da stabilire, per il momento esistono solo i campo "data_q" e "data_a"
-int32_t prepare_data_for_greeting_message (api_query_t *query, api_answer_t *answer, uint16_t answ_size, char * data_q, char * data_a, uint8_t q)
+int32_t prepare_data_for_greeting_message (api_query_t *query, api_answer_t *answer, char * data_q, char * data_a, uint8_t q)
 {
 	int32_t l;
-	if (q)
+	int32_t attesi = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(greeting_message_answer_t);
+#if CMP_CRIPTAZIONE
+	attesi += ENC_KEY_LENGTH - (attesi % ENC_KEY_LENGTH);
+#endif
+	if (q == 1)
 	{
 		memset(query, 0, sizeof(api_query_t));
 		memcpy(query->data.greeting_message.data, data_q, sizeof(query->data.greeting_message.data));
-		l = prepare_data_for_gen_command(query, answer, sizeof(greeting_message_query_t), answ_size, COMMAND_GET_SET_PARAM, q);
+		l = prepare_data_for_gen_command(query, answer, sizeof(greeting_message_query_t), sizeof(greeting_message_answer_t), COMMAND_GET_SET_PARAM, q);
 		return l;
 	}
-	else
+	else if (q == 0)
 	{
-		l = prepare_data_for_gen_command(query, answer, sizeof(greeting_message_query_t), answ_size, COMMAND_GET_SET_PARAM, q);
+		l = prepare_data_for_gen_command(query, answer, sizeof(greeting_message_query_t), attesi, COMMAND_GET_SET_PARAM, q);
 		memcpy(data_a, answer->data.greeting_message.data, sizeof(answer->data.greeting_message.data));
 		return l;
 	}
+	else
+		return attesi;
 }
 
 //-----------------------------------------------------------------------------
@@ -317,32 +315,30 @@ int32_t prepare_data_for_gen_command(api_query_t *query, api_answer_t *answer, u
 //return:		se q=0 la funzione ritorna 0 se il vettore di answer e' composto correttamente, altrimenti un valore negativo
 //					se q=1 la funzione ritorna il numero di byte da inviare
 //					se q=2 la funzione ritorna il numero di byte che il dispositivo deve rispondere dopo la chiamata
-int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint32_t * time, uint32_t * cnt_attiv, uint8_t get_set, uint8_t q)
+int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer, uint32_t * time, uint32_t * cnt_attiv, uint8_t get_set, uint8_t q)
 {
 	int32_t l;
+	int32_t attesi = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(get_set_time_answer_t);
+#if CMP_CRIPTAZIONE
+	attesi += ENC_KEY_LENGTH - (attesi % ENC_KEY_LENGTH);
+#endif
 	if (q == 1)
 	{
 		memset(query, 0, sizeof(api_query_t));
 		query->data.get_set_time.time = *time;
 		query->data.get_set_time.get_set = get_set;
-		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_time_query_t), answ_size, COMMAND_GET_SET_TIME, q);
+		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_time_query_t), sizeof(get_set_time_answer_t), COMMAND_GET_SET_TIME, q);
 		return l;
 	}
 	else if (q == 0)
 	{
-		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_time_query_t), answ_size, COMMAND_GET_SET_TIME, q);
+		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_time_query_t), attesi, COMMAND_GET_SET_TIME, q);
 		*time = answer->data.get_set_time.time;
 		*cnt_attiv = answer->data.get_set_time.cnt_attivazioni;
 		return l;
 	}
 	else
-	{
-		int k = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(get_set_time_answer_t);
-	#if CMP_CRIPTAZIONE
-		k += ENC_KEY_LENGTH - (k % ENC_KEY_LENGTH);
-	#endif
-		return k;
-	}
+		return attesi;
 }
 
 //-----------------------------------------------------------------------------
