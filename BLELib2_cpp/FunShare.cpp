@@ -175,9 +175,10 @@ int32_t prepare_data_for_raw_write (api_query_t *query, api_answer_t *answer, ui
 //param_num:	numero di parametro da leggere/scrivere
 //value:			se write=1 e q=1 valore da assegnare al parametro, altrimenti non significativo
 //write:			1=scrittura 0=lettura
-//return:		se q=1 la funzione ritorna il numero di byte da inviare
-//					se q=0 e write=0 la funzione ritorna il valore del parametro letto in caso di risposta andata a buon fine, altrimenti un valore negativo
+//return:		se q=0 e write=0 la funzione ritorna il valore del parametro letto in caso di risposta andata a buon fine, altrimenti un valore negativo
 //					se q=0 e write=1 la funzione ritorna 0 in caso di risposta andata a buon fine, altrimenti un valore negativo
+//					se q=1 la funzione ritorna il numero di byte da inviare
+//					se q=2 la funzione ritorna il numero di byte di risposta che il dispositivo deve rispondere dopo la chiamata
 int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint16_t param_num, uint32_t value, uint8_t write, uint8_t q)
 {
 	int32_t l;
@@ -212,6 +213,13 @@ int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer
 }
 
 //-----------------------------------------------------------------------------
+//Parametri generici: vedere descrizione parametri generici della funzione "prepare_data_for_get_set_param"
+//Parametri specifici:
+//device:		0=led, 1=elettrovalvola, 0xff=cancellazione logger
+//attivazione:	0=lampeggiante, 1=fissa, 0xfe=fine attivazione device 0xff fine di tutte le attivazioni
+//return:		se q=0 la funzione ritorna 0 se il vettore di answer e' composto correttamente, altrimenti un valore negativo
+//					se q=1 la funzione ritorna il numero di byte da inviare
+//					se q=2 la funzione ritorna il numero di byte che il dispositivo deve rispondere dopo la chiamata
 int32_t prepare_data_for_devices_onboard (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint8_t device, uint8_t attivazione, uint8_t q)
 {
 	int32_t l;
@@ -242,7 +250,7 @@ int32_t prepare_data_for_devices_onboard (api_query_t *query, api_answer_t *answ
 }
 
 //-----------------------------------------------------------------------------
-//Parametri generici: per i parametri generici vedere prepare_data_for_get_set_param
+//Parametri generici: per i parametri generici vedere "prepare_data_for_get_set_param"
 //Parametri specifici: da stabilire, per il momento esistono solo i campo "data_q" e "data_a"
 int32_t prepare_data_for_greeting_message (api_query_t *query, api_answer_t *answer, uint16_t answ_size, char * data_q, char * data_a, uint8_t q)
 {
@@ -263,6 +271,7 @@ int32_t prepare_data_for_greeting_message (api_query_t *query, api_answer_t *ans
 }
 
 //-----------------------------------------------------------------------------
+//Funzione interna utilizzabile anche da chiamate C/C++
 int32_t prepare_data_for_gen_command(api_query_t *query, api_answer_t *answer, uint16_t size_query, uint16_t size_answer, uint8_t command, uint8_t q)
 {
     int32_t l;
@@ -298,11 +307,14 @@ int32_t prepare_data_for_gen_command(api_query_t *query, api_answer_t *answer, u
 }
 
 //-----------------------------------------------------------------------------
-//Parametri generici: per i parametri generici vedere prepare_data_for_get_set_param
+//Parametri generici: per i parametri generici vedere "prepare_data_for_get_set_param"
 //Parametri specifici:
-//time:		in caso di get la query riporta 0 mentre l'answer restituisce la data ed ora letti
-//				in caso di set la query deve contenere la data ed ora da impostare mentre l'answer restituisce 0
-//get_set:	0 = get, 1 = set
+//time:			in caso di get la query riporta 0 mentre l'answer restituisce la data ed ora letti
+//					in caso di set la query deve contenere la data ed ora da impostare mentre l'answer restituisce 0
+//get_set:		0 = get, 1 = set
+//return:		se q=0 la funzione ritorna 0 se il vettore di answer e' composto correttamente, altrimenti un valore negativo
+//					se q=1 la funzione ritorna il numero di byte da inviare
+//					se q=2 la funzione ritorna il numero di byte che il dispositivo deve rispondere dopo la chiamata
 int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint32_t * time, uint8_t get_set, uint8_t q)
 {
 	int32_t l;
