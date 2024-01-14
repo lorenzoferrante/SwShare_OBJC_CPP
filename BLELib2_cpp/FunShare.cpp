@@ -309,13 +309,15 @@ int32_t prepare_data_for_gen_command(api_query_t *query, api_answer_t *answer, u
 //-----------------------------------------------------------------------------
 //Parametri generici: per i parametri generici vedere "prepare_data_for_get_set_param"
 //Parametri specifici:
-//time:			in caso di get la query riporta 0 mentre l'answer restituisce la data ed ora letti
-//					in caso di set la query deve contenere la data ed ora da impostare mentre l'answer restituisce 0
+//time:			in caso di get restituisce la data ed ora letti
+//					in caso di set deve contenere la data ed ora da impostare
+//cnt_attiv:	in caso di get restituisce il numero di attivazioni dell'elettrovalvola
+//					in caso di set non e' significativo (viene restituito zero)
 //get_set:		0 = get, 1 = set
 //return:		se q=0 la funzione ritorna 0 se il vettore di answer e' composto correttamente, altrimenti un valore negativo
 //					se q=1 la funzione ritorna il numero di byte da inviare
 //					se q=2 la funzione ritorna il numero di byte che il dispositivo deve rispondere dopo la chiamata
-int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint32_t * time, uint8_t get_set, uint8_t q)
+int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint32_t * time, uint32_t * cnt_attiv, uint8_t get_set, uint8_t q)
 {
 	int32_t l;
 	if (q == 1)
@@ -330,11 +332,12 @@ int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer,
 	{
 		l = prepare_data_for_gen_command(query, answer, sizeof(get_set_time_query_t), answ_size, COMMAND_GET_SET_TIME, q);
 		*time = answer->data.get_set_time.time;
+		*cnt_attiv = answer->data.get_set_time.cnt_attivazioni;
 		return l;
 	}
 	else
 	{
-		int k = sizeof(api_answer_t) - sizeof(generic_answers_t) + answ_size;
+		int k = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(get_set_time_answer_t);
 	#if CMP_CRIPTAZIONE
 		k += ENC_KEY_LENGTH - (k % ENC_KEY_LENGTH);
 	#endif

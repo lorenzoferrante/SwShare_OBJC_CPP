@@ -31,7 +31,7 @@ int32_t prepare_data_for_raw_write (api_query_t *query, api_answer_t *answer, ui
 int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint16_t param_num, uint32_t value, uint8_t write, uint8_t q);
 int32_t prepare_data_for_gen_command (api_query_t *query, api_answer_t *answer, uint16_t size_query, uint16_t size_answer, uint8_t command, uint8_t q);
 int32_t prepare_data_for_devices_onboard (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint8_t device, uint8_t attivazione, uint8_t q);
-int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint32_t * time, uint8_t get_set, uint8_t q);
+int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint32_t * time, uint32_t *cnt_attiv, uint8_t get_set, uint8_t q);
 uint8_t isleap(uint8_t year);
 void gettime(uint32_t t, t_calendar *r);
 uint32_t _mktime(t_calendar * t);

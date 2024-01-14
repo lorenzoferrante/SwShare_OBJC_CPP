@@ -281,8 +281,9 @@ typedef struct
 //-----------------------------------------------------------------------------
 typedef struct
 {
-	uint32_t									time;				//in caso di get time riporta i secondi trascorsi dal primo gennaio 2000
-	uint8_t									spare[60];
+	uint32_t									time;						//in caso di get riporta i secondi trascorsi dal primo gennaio 2000
+	uint32_t									cnt_attivazioni;		//in caso di get riporta il numero di attivazioni
+	uint8_t									spare[56];
 } PACKED get_set_time_answer_t;
 
 //-----------------------------------------------------------------------------
