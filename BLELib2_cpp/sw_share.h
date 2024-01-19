@@ -142,7 +142,8 @@ typedef enum
 //-----------------------------------------------------------------------------
 typedef enum
 {
-	PARAMETER_SENSITIVITY,
+	PARAMETER_RUB_SENSITIVITY,
+	PARAMETER_SCARICO_SENSITIVITY,
 	PARAMETER_FLUSH_TIME_SHORT,
 	PARAMETER_FLUSH_TIME_LONG,
 	PARAMETER_AVAILABLE_1,

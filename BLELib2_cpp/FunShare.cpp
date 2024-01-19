@@ -171,18 +171,17 @@ int32_t prepare_data_for_raw_write (api_query_t *query, api_answer_t *answer, ui
 //answer:		puntatore al vettore di answer da processare (valido solo se q=0 altrimenti puo' essere messo a NULL)
 //q: 				0 = analisi del vettore di answer, 1 = preparazione del vettore di query con i dati da scrivere, 2 = calcolo dati da ricevere
 //Parametri specifici:
-//param_num:	numero di parametro da leggere/scrivere
+//param_num:	numero di parametro da leggere/scrivere (serve solo se q=1)
 //value:			se write=1 e q=1 valore da assegnare al parametro, altrimenti non significativo
 //write:			1=scrittura 0=lettura
 //return:		se q=0 e write=0 la funzione ritorna il valore del parametro letto in caso di risposta andata a buon fine, altrimenti un valore negativo
 //					se q=0 e write=1 la funzione ritorna 0 in caso di risposta andata a buon fine, altrimenti un valore negativo
 //					se q=1 la funzione ritorna il numero di byte da inviare
 //					se q=2 la funzione ritorna il numero di byte di risposta che il dispositivo deve rispondere dopo la chiamata
-int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer, uint16_t answ_size, uint16_t param_num, uint32_t value, uint8_t write, uint8_t q)
+int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer, uint16_t param_num, uint32_t value, uint8_t write, uint8_t q)
 {
 	int32_t l;
 	int32_t attesi = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(get_set_param_answer_t);
-	(void) answ_size;
 #if CMP_CRIPTAZIONE
 	attesi += ENC_KEY_LENGTH - (attesi % ENC_KEY_LENGTH);
 #endif
