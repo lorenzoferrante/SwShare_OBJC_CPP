@@ -142,24 +142,27 @@ typedef enum
 //-----------------------------------------------------------------------------
 typedef enum
 {
-	PAR_RUB_SENSITIVITY,
-	PAR_SCA_SENSITIVITY,
-	PAR_RUB_RITARDO_CHIUSURA,
-	PAR_RUB_INTERVALLO_CICLO,
-	PAR_RUB_TEMPO_CICLO,
-	PAR_SCA_RAGGIO_PULSANTE,
-	PAR_SCA_ATTESA_SCARICO,
-	PAR_SCA_MIN_ATTESA_SCARICO,
-	PAR_SCA_FLUSH_TIME_SHORT,
-	PAR_SCA_FLUSH_TIME_LONG,
-	PAR_SCA_INTERVALLO_CICLO,
-	PAR_SCA_TEMPO_CICLO,
-	PAR_SCA_TEMPO_STAZION_MIN,
-	PAR_SCA_TEMPO_FILTRO_STAZION,
-	PAR_SCA_TEMPO_SOGLIA_STAZION,
-	PAR_SCA_TEMPO_SCARICO_VELO,
-	PAR_SCA_TEMPO_INTERVALLO_VELO,
-	PAR_RUB_TEMPO_ANTIALLAGAMENTO,
+	PAR_RUB_SENSITIVITY,						//0	Parametro 1			regolazione raggio d’azione del sensore VERTOF del rilevamento delle mani (max 20cm) u.m.: millimetri
+	PAR_SCA_SENSITIVITY,                //1	Parametro 2			regolazione raggio d’azione a rilevamento della persona (max 80cm) u.m.: millimetri
+	PAR_RUB_RITARDO_CHIUSURA,           //2	Parametro 3 		regolazione del ritardo nella chiusura dell’acqua dopo aver tolto le mani dal raggio d’azione del sensore VERTOF u.m. mS
+	PAR_RUB_INTERVALLO_CICLO,           //3   Parametro 4 		rubinetto: regolazione intervallo di tempo tra uno scarico ciclico e l’altro (max una settimana) u.m.: minuti
+	PAR_RUB_TEMPO_CICLO,                //4   Parametro 5       rubinetto: durata del tempo di uscita dell’acqua dello scarico ciclico (max 30sec) u.m.: mS
+	PAR_SCA_RAGGIO_PULSANTE,            //5   Parametro 6       regolazione raggio d’azione ad avvicinamento della mano (pulsante ottico max 10cm) u.m.: millimetri
+	PAR_SCA_ATTESA_SCARICO,             //6   Parametro 7       regolazione ritardo apertura acqua dopo l’allontanamento della persona (max 10sec) u.m.: mS
+	PAR_SCA_MIN_ATTESA_SCARICO,         //7   Parametro 8       regolazione tempo minimo dopo il quale avviene lo scarico (max 10sec) u.m.: mS
+	PAR_SCA_TEMPO_SCARICO_CORTO,        //8   Parametro 9       regolazione durata scarico acqua tramite secondo trimmer (max 12 sec) tempo corto u.m. mS
+	PAR_SCA_TEMPO_SCARICO_LUNGO,        //9   Parametro 10      regolazione durata scarico acqua tramite secondo trimmer (max 12 sec) tempo lungo u.m. mS
+	PAR_SCA_INTERVALLO_CICLO,           //10  Parametro 11      scarico: regolazione intervallo di tempo tra uno scarico ciclico e l’altro (max una settimana) u.m.: minuti
+	PAR_SCA_TEMPO_CICLO,                //11  Parametro 12      scarico: durata del tempo di uscita dell’acqua dello scarico ciclico (max 30sec) u.m.: mS
+	PAR_SCA_TEMPO_STAZION_MIN,          //12  Parametro 13      scarico: tempo minimo di permanenza della persona davanti alla fotocellula per innescare lo scarico max 8 secondi (max 10sec) u.m.: mS
+	PAR_SCA_TEMPO_FILTRO_STAZION,       //13  Parametro 14      tempo necessario all'azzeramento del tempo di stazionamento dopo che la fotocellula sia andata in off (per filtrare la condizione per cui la fotocellula potrebbe avere dei buchi sulla lettura di una persona che non devono far resettare immediatamente il tempo di stazionamento) u.m.: mS
+	PAR_SCA_TEMPO_SOGLIA_STAZION,       //14  Parametro 15      tempo soglia stazionamento oltre la quale si passa a tempo scarico lungo u.m.: mS
+	PAR_SCA_TEMPO_SCARICO_VELO,         //15  Parametro 16      regolazione durata tempo di scarico velo  u.m.: mS
+	PAR_SCA_TEMPO_INTERVALLO_VELO,      //16  Parametro 17      regolazione intervallo velo intermittente  u.m.: mS
+	PAR_RUB_TEMPO_ANTIALLAGAMENTO,      //17  Parametro 18      tempo intervento anti-allagamento u.m.: mS
+	PAR_SCA_TEMPO_SCARICO,					//18  Parametro 19		regolazione durata scarico acqua tramite secondo trimmer (max 12 sec) u.m.: mS
+
+
 
 	PAR_AVAILABLE_1,
 	PAR_AVAILABLE_2,
