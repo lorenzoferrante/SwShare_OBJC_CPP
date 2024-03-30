@@ -8,6 +8,11 @@
 #include "FunShare.h"
 #include "time.h"
 
+#if defined(__IS_CLIENT__)
+#include <stdint.h>
+#include <stdbool.h>
+#endif
+
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
 #import <BLELib2/AESFunctions.h>
@@ -459,7 +464,7 @@ uint32_t maketime(t_calendar *t)
     return ((day + t->hour) * i + t->min) * i + t->sec;
 }
 
-#if !defined(__SOFTWARE__) && !defined(__IS_APPLICATION__)
+#if !defined(__SOFTWARE__) && !defined(__IS_APPLICATION__) && !defined(__IS_CLIENT__)
 char* test_func(void) {
     char str[] = "TEST FUNC";
     return *str;

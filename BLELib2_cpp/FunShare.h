@@ -11,6 +11,10 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#if defined(__IS_CLIENT__)
+#include <stdbool.h>
+#endif
+
 #define MAX_NUM_READ_WRITE (128)
 #define MAX_MTU (128)
 

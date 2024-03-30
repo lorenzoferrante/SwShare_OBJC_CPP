@@ -7,6 +7,11 @@
 
 #include "AESFunctions.h"
 
+#if defined(__IS_CLIENT__)
+#include <stdint.h>
+#include <stdbool.h>
+#endif
+
 #define AES_EXIT_SUCCESS 0
 #define AES_EXIT_FAILURE (-1)
 #define VERSION_1

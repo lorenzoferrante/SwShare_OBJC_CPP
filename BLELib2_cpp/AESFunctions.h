@@ -26,17 +26,17 @@ void print_hex(unsigned char *p, int len);
 
 void xor_block( void *d, const void *s );
 void copy_and_key( void *d, const void *s, const void *k );
-void mix_sub_columns(uint8_t dt[N_BLOCK_AES]);
-void inv_mix_sub_columns(uint8_t dt[N_BLOCK_AES]);
-void inv_shift_sub_rows(uint8_t st[N_BLOCK_AES]);
-void add_round_key(uint8_t d[N_BLOCK_AES], const uint8_t k[N_BLOCK_AES]);
-void shift_sub_rows(uint8_t st[N_BLOCK_AES]);
+void mix_sub_columns(uint8_t *dt);
+void inv_mix_sub_columns(uint8_t *dt);
+void inv_shift_sub_rows(uint8_t *st);
+void add_round_key(uint8_t *d, const uint8_t *k);
+void shift_sub_rows(uint8_t *st);
 
-return_type_aes aes_set_key(const unsigned char key[], length_type_aes keylen, aes_context ctx[1]);
-return_type_aes aes_encrypt(const unsigned char in[N_BLOCK_AES], unsigned char out[N_BLOCK_AES], const aes_context ctx[1]);
-return_type_aes aes_cbc_encrypt(const unsigned char *in, unsigned char *out, uint16_t n_block, unsigned char iv[N_BLOCK_AES], const aes_context ctx[1]);
-return_type_aes aes_decrypt(const unsigned char in[N_BLOCK_AES], unsigned char out[N_BLOCK_AES], const aes_context ctx[1]);
-return_type_aes aes_cbc_decrypt(const unsigned char *in, unsigned char *out, uint16_t n_block, unsigned char iv[N_BLOCK_AES], const aes_context ctx[1]);
+return_type_aes aes_set_key(const unsigned char *key, length_type_aes keylen, aes_context *ctx);
+return_type_aes aes_encrypt(const unsigned char *in, unsigned char *out, const aes_context *ctx);
+return_type_aes aes_cbc_encrypt(const unsigned char *in, unsigned char *out, uint16_t n_block, unsigned char *iv, const aes_context *ctx);
+return_type_aes aes_decrypt(const unsigned char *in, unsigned char *out, const aes_context *ctx);
+return_type_aes aes_cbc_decrypt(const unsigned char *in, unsigned char *out, uint16_t n_block, unsigned char *iv, const aes_context *ctx);
 
 uint32_t data_pad(unsigned char *buffer, uint32_t size);
 
