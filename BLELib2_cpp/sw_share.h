@@ -32,6 +32,7 @@ typedef uint16_t tempo_tw;
 #define MAX_NUM_READ_WRITE 								(128)
 #define MAX_MTU 												(128)
 #define N_QUEUE_HD_LOGGER									(5)
+#define N_QUEUE_WIFI_LOGGER								(5)
 
 //-----------------------------------------------------------------------------
 // struttura calendario
@@ -51,6 +52,7 @@ typedef uint8_t length_type_aes;
 #define N_BLOCK_AES											(ENC_KEY_LENGTH)
 #define N_MAX_ROUNDS_AES									(14)
 #define N_PARAM_HIDDEN_LOGGER								(4)
+#define N_PARAM_WIFI_LOGGER								(4)
 #define N_HIDDEN_LOGGER										(200)
 #define BASE_ADDR_READ_PARAMETERS						(0xfff00000)
 #define BASE_ADDR_READ_LOGGER								(0xfff10000)
@@ -65,6 +67,14 @@ typedef enum
 	N_HL_EVT_TYPE,
 	HL_EV_CANCELLA_LOGGER = 0xff,
 } PACKED T_HL_EVENTS;
+
+//-----------------------------------------------------------------------------
+typedef enum
+{
+	WIFI_EV_NULL,
+	WIFI_EV_TROPPOPIENO,
+	N_WIFI_EVENTS,
+} PACKED WIFI_EVENTS_T;
 
 //-----------------------------------------------------------------------------
 typedef enum
@@ -120,6 +130,14 @@ typedef struct
 } PACKED t_hidden_logger;
 
 //-----------------------------------------------------------------------------
+typedef struct
+{
+	uint16_t		evento;
+	uint32_t		date_time;
+	uint32_t		parametri[N_PARAM_WIFI_LOGGER];
+} PACKED t_wifi_log_element;
+
+//-----------------------------------------------------------------------------
 typedef enum
 {
 	COM_CHANNEL_BLE,
@@ -138,6 +156,16 @@ typedef enum
 	COMMAND_GET_SET_TIME,
 	COMMAND_DEVICES_ONBOARD,
 } PACKED API_COMMAND_T;
+
+//-----------------------------------------------------------------------------
+typedef enum
+{
+	DEVICE_LED,									//0=led
+	DEVICE_VALVE,								//1=elettrovalvola
+	DEVICE_OVERFULL,							//2=troppo pieno
+	DEVICE_NUMBER,
+	DEVICE_CLEAN_LOGGER = 0xff,			//0xff=cancellazione logger
+} PACKED DEVICE_TYPE_T;
 
 //-----------------------------------------------------------------------------
 typedef enum
@@ -232,7 +260,7 @@ typedef struct
 //-----------------------------------------------------------------------------
 typedef struct
 {
-	uint8_t									device;			//0=led, 1=elettrovalvola, 0xff=cancellazione logger
+	uint8_t									device;			//0=led, 1=elettrovalvola, 2=troppo pieno 0xff=cancellazione logger
 	uint8_t									attivazione;	//0=lampeggiante, 1=fissa, 0xfe=fine attivazione device 0xff fine di tutte le attivazioni
 	uint8_t									spare[62];
 } PACKED devices_onboard_query_t;
