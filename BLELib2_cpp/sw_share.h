@@ -190,8 +190,6 @@ typedef enum
 	PAR_RUB_TEMPO_ANTIALLAGAMENTO,      //17  Parametro 18      tempo intervento anti-allagamento u.m.: mS
 	PAR_SCA_TEMPO_SCARICO,					//18  Parametro 19		regolazione durata scarico acqua tramite secondo trimmer (max 12 sec) u.m.: mS
 
-
-
 	PAR_AVAILABLE_1,
 	PAR_AVAILABLE_2,
 	PAR_AVAILABLE_3,
