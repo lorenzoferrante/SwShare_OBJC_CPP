@@ -148,13 +148,13 @@ typedef enum
 //-----------------------------------------------------------------------------
 typedef enum
 {
-	COMMAND_NULL,
-	COMMAND_RAW_READ,
-	COMMAND_RAW_WRITE,
-	COMMAND_GET_SET_PARAM,
-	COMMAND_GREETING_MESSAGE,
-	COMMAND_GET_SET_TIME,
-	COMMAND_DEVICES_ONBOARD,
+	COMMAND_NULL,							//
+	COMMAND_RAW_READ,						//
+	COMMAND_RAW_WRITE,					//
+	COMMAND_GET_SET_PARAM,				//
+	COMMAND_GREETING_MESSAGE,			//
+	COMMAND_GET_SET_TIME,				//
+	COMMAND_DEVICES_ONBOARD,			//
 } PACKED API_COMMAND_T;
 
 //-----------------------------------------------------------------------------
@@ -328,7 +328,8 @@ typedef struct
 {
 	uint32_t									time;						//in caso di get riporta i secondi trascorsi dal primo gennaio 2000
 	uint32_t									cnt_attivazioni;		//in caso di get riporta il numero di attivazioni
-	uint8_t									spare[56];
+	uint32_t									time_activity;			//in caso di get riporta il tempo di attivita' in centinaia di millisecondi
+	uint8_t									spare[52];
 } PACKED get_set_time_answer_t;
 
 //-----------------------------------------------------------------------------
