@@ -189,8 +189,8 @@ typedef enum
 	PAR_SCA_TEMPO_INTERVALLO_VELO,      //16  Parametro 17      regolazione intervallo velo intermittente  u.m.: mS
 	PAR_RUB_TEMPO_ANTIALLAGAMENTO,      //17  Parametro 18      tempo intervento anti-allagamento u.m.: mS
 	PAR_SCA_TEMPO_SCARICO,					//18  Parametro 19		regolazione durata scarico acqua tramite secondo trimmer (max 12 sec) u.m.: mS
+	PAR_COM_CALIBRAZIONE,					//19  Parametro 20		calibrazione del sensore ToF - parametro comune -
 
-	PAR_AVAILABLE_1,
 	PAR_AVAILABLE_2,
 	PAR_AVAILABLE_3,
 	PAR_AVAILABLE_4,
