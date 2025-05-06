@@ -33,6 +33,7 @@ typedef uint16_t tempo_tw;
 #define MAX_MTU 												(128)
 #define N_QUEUE_HD_LOGGER									(5)
 #define N_QUEUE_WIFI_LOGGER								(5)
+#define N_CHAR_NAME											(16)
 
 //-----------------------------------------------------------------------------
 // struttura calendario
@@ -250,15 +251,17 @@ typedef struct
 //-----------------------------------------------------------------------------
 typedef struct
 {
-	uint32_t									time;				//in caso di set riportare il tempo in secondi a partire dal primo gennaio 2000
-	uint8_t									get_set;			//0 = get, 1 = set
-	uint8_t									spare[59];
+	uint32_t									time;						//in caso di set riportare il tempo in secondi a partire dal primo gennaio 2000
+	uint8_t									get_set;					//0 = get, 1 = set time, 2 = set nome
+	uint8_t									spare_1;					//
+	char										nome[N_CHAR_NAME];	//nome del dispositivo
+	uint8_t									spare[42];
 } PACKED get_set_time_query_t;
 
 //-----------------------------------------------------------------------------
 typedef struct
 {
-	uint8_t									device;			//0=led, 1=elettrovalvola, 2=troppo pieno 0xff=cancellazione logger
+	uint8_t									device;			//0=led, 1=elettrovalvola, 2=troppo pieno, 0xff=cancellazione logger, 0xfe=ripristino ai dati di fabbrica
 	uint8_t									attivazione;	//0=lampeggiante, 1=fissa, 0xfe=fine attivazione device 0xff fine di tutte le attivazioni
 	uint8_t									spare[62];
 } PACKED devices_onboard_query_t;
