@@ -1,6 +1,0 @@
-framework module BLELib2 {
-  umbrella header "BLELib2.h"
-  export *
-
-  module * { export * }
-}
