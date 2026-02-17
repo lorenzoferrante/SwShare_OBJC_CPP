@@ -31,6 +31,25 @@
 #define DATA_ENCRYPT(a, b, c, d) b
 #endif
 
+static int32_t validate_answer_crc_region(const api_answer_t *answer, uint32_t packet_len, uint32_t *crc_len)
+{
+    const uint32_t min_answer_len = (uint32_t)(sizeof(answer->crc) + sizeof(answer->number) + sizeof(answer->param));
+
+    if ((answer == NULL) || (crc_len == NULL))
+        return -4;
+    if ((packet_len < min_answer_len) || (packet_len > sizeof(api_answer_t)))
+        return -4;
+    if (answer->number > MAX_PACKET_SIZE)
+        return -4;
+
+    const uint32_t computed_crc_len = (uint32_t)answer->number + sizeof(answer->number) + sizeof(answer->param);
+    if (computed_crc_len > (packet_len - sizeof(answer->crc)))
+        return -4;
+
+    *crc_len = computed_crc_len;
+    return 0;
+}
+
 uint16_t const crc16_table[256] =
         {
                 0x0000,0xc0c1,0xc181,0x0140,0xc301,0x03c0,0x0280,0xc241,
@@ -112,10 +131,15 @@ int32_t prepare_data_for_raw_read (api_query_t *query, api_answer_t *answer, uin
 	else
 	{
 		l = DATA_ENCRYPT((uint8_t *)answer, quanti, (uint8_t *)TEMPORARY_MAIN_PWD, AES_DEC);
+		if ((l <= 0) || ((uint32_t)l > sizeof(api_answer_t)))
+			return -4;
+		uint32_t crc_len = 0;
+		if (validate_answer_crc_region(answer, (uint32_t)l, &crc_len) < 0)
+			return -4;
 		if (answer->param.flags.busy)
 			return -1;
 		uint16_t loc_crc;
-		loc_crc = crc16(answer->number + sizeof(answer->number) + sizeof(answer->param), (uint8_t *)&answer->number);
+		loc_crc = crc16(crc_len, (uint8_t *)&answer->number);
 		if (loc_crc != answer->crc)
 			return -2;
 		uint16_t num = answer->data.raw_read.number;
@@ -158,11 +182,16 @@ int32_t prepare_data_for_raw_write (api_query_t *query, api_answer_t *answer, ui
 	}
 	else
 	{
-		(void) DATA_ENCRYPT((uint8_t *)answer, quanti, (uint8_t *)TEMPORARY_MAIN_PWD, AES_DEC);
+		l = DATA_ENCRYPT((uint8_t *)answer, quanti, (uint8_t *)TEMPORARY_MAIN_PWD, AES_DEC);
+		if ((l <= 0) || ((uint32_t)l > sizeof(api_answer_t)))
+			return -4;
+		uint32_t crc_len = 0;
+		if (validate_answer_crc_region(answer, (uint32_t)l, &crc_len) < 0)
+			return -4;
 		if (answer->param.flags.busy)
 			return -1;
 		uint16_t loc_crc;
-		loc_crc = crc16(answer->number + sizeof(answer->number) + sizeof(answer->param), (uint8_t *)&answer->number);
+		loc_crc = crc16(crc_len, (uint8_t *)&answer->number);
 		if (loc_crc != answer->crc)
 			return -2;
 		return 0;
@@ -289,11 +318,18 @@ int32_t prepare_data_for_gen_command(api_query_t *query, api_answer_t *answer, u
     }
 	 else if (q == 0)
     {
-        (void) DATA_ENCRYPT((uint8_t *)answer, size_answer, (uint8_t *)TEMPORARY_MAIN_PWD, AES_DEC);
+        if ((answer == NULL) || (size_answer == 0) || ((uint32_t)size_answer > sizeof(api_answer_t)))
+            return -4;
+        l = (int32_t) DATA_ENCRYPT((uint8_t *)answer, size_answer, (uint8_t *)TEMPORARY_MAIN_PWD, AES_DEC);
+        if ((l <= 0) || (l > size_answer))
+            return -4;
+        uint32_t crc_len = 0;
+        if (validate_answer_crc_region(answer, (uint32_t)l, &crc_len) < 0)
+            return -4;
         if (answer->param.flags.busy)
             return -1;
         uint16_t loc_crc;
-        loc_crc = crc16(answer->number + sizeof(answer->number) + sizeof(answer->param), (uint8_t *)&answer->number);
+        loc_crc = crc16(crc_len, (uint8_t *)&answer->number);
         if (loc_crc != answer->crc)
             return -2;
         return 0;
@@ -470,8 +506,8 @@ uint32_t maketime(t_calendar *t)
 
 #if !defined(__SOFTWARE__) && !defined(__IS_APPLICATION__) && !defined(__IS_CLIENT__)
 char* test_func(void) {
-    char str[] = "TEST FUNC";
-    return *str;
+    static char str[] = "TEST FUNC";
+    return str;
 }
 #endif
 
