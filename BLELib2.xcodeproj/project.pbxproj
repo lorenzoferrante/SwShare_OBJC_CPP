@@ -303,7 +303,7 @@
 				OTHER_LDFLAGS = "-Wno-quoted-include-in-framework-header";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lorenzoferrante.BLELib2;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -335,7 +335,7 @@
 				OTHER_LDFLAGS = "-Wno-quoted-include-in-framework-header";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lorenzoferrante.BLELib2;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
