@@ -191,8 +191,8 @@ typedef enum
 	PAR_RUB_TEMPO_ANTIALLAGAMENTO,      //17  Parametro 18      tempo intervento anti-allagamento u.m.: mS
 	PAR_SCA_TEMPO_SCARICO,					//18  Parametro 19		regolazione durata scarico acqua tramite secondo trimmer (max 12 sec) u.m.: mS
 	PAR_COM_CALIBRAZIONE,					//19  Parametro 20		calibrazione del sensore ToF - parametro comune -
+	PAR_SCA_OPT_SCARICO_AUTO,				//20	Parametro 21		opzione. 0:se viene fatto uno scarico manuale il sistema di scarico automatico resta attivo, 1:se viene fatto uno scarico manuale il sistema di scarico automatico non si attiva
 
-	PAR_AVAILABLE_2,
 	PAR_AVAILABLE_3,
 	PAR_AVAILABLE_4,
 	PAR_AVAILABLE_5,
