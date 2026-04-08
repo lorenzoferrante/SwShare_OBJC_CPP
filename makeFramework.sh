@@ -1,90 +1,65 @@
 #!/bin/bash
 
-BUILD_DIR=./build/xcframeworks
-simulatorSdk=iphonesimulator
-simulatorDataPath=$BUILD_DIR/$simulatorSdk
-scheme=$1
-framework=$1
-action=$2
-simulatorDestination="iOS Simulator”"
+scheme=BLELib2
+framework=BLELib2
+BUILD_DIR=./build/xcf
+iOSArchive=BLELib2-iOS.xcarchive
+SimulatorArchive=BLELib2-Simulator.xcarchive
+SOURCE_DIR=./BLELib2_cpp
+DEST_DIR=./BLELib2
 
-usage="
-$(basename "$0") [scheme] [action]
-Create .frameork from C++ library.
-    action: move, build, clean
-    -h show the help text
-"
+# ─── Pre-processing ───────────────────────────────────────────────────────────
 
-while getopts w:o:h ARG
-do
-    case $ARG in
-        h) echo "$usage"
-            exit ;;
-    esac
+# Create destination folder (clean start)
+rm -rf "$DEST_DIR"
+mkdir -p "$DEST_DIR"
+
+# Copy all files from BLELib2_cpp into BLELib2
+cp -R "$SOURCE_DIR"/. "$DEST_DIR"/
+
+# Rename .cpp files to .m
+find "$DEST_DIR" -name "*.cpp" | while read f; do
+    mv "$f" "${f%.cpp}.m"
 done
 
-buildFramework() {
-    echo "*** Building framwork ***"
-    #cd $workingFolder
-    #echo $workingFolder
+echo "Pre-processing done. Files in $DEST_DIR:"
+ls "$DEST_DIR"
 
-    cd
-    workingFolder=$( pwd )
-    echo "WORKING FOLDER: ${workingFolder}"
+# ─── Build ────────────────────────────────────────────────────────────────────
 
-    sudo rm -rf build/
-    sudo mkdir -p $BUILD_DIR
+rm -rf build/
+mkdir -p $BUILD_DIR
 
-    echo "Building framework..."
+xcodebuild \
+    -workspace "${scheme}.xcodeproj/project.xcworkspace" \
+    -scheme $scheme \
+    ONLY_ACTIVE_ARCH=NO \
+    -sdk iphoneos \
+    -configuration Release \
+    -destination="generic/platform=iOS" \
+    -archivePath "${BUILD_DIR}/${framework}/${iOSArchive}" \
+    SKIP_INSTALL=NO \
+    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
+    INSTALL_PATH=/Library/Frameworks \
+    CODE_SIGNING_ALLOWED=NO \
+    archive
 
-    xcodebuild \
-        -workspace "${scheme}.xcodeproj/project.xcworkspace" \
-        -scheme $scheme \
-        ONLY_ACTIVE_ARCH=NO \
-        -sdk iphonesimulator \
-        -destination="$simulatorDestination" \
-        -archivePath "${BUILD_DIR}/xcf/${framework}/${simulatorSdk}.xcarchive" \
-        -derivedDataPath "${BUILD_DIR}/xcf/${framework}/${simulatorDataPath}/${framework}" \
-        SKIP_INSTALL=NO \
-        BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
-        archive
+xcodebuild \
+    -workspace "${scheme}.xcodeproj/project.xcworkspace" \
+    -scheme $scheme \
+    ONLY_ACTIVE_ARCH=NO \
+    -sdk iphonesimulator \
+    -configuration Release \
+    -destination="generic/platform=iOS Simulator" \
+    -archivePath "${BUILD_DIR}/${framework}/${SimulatorArchive}" \
+    SKIP_INSTALL=NO \
+    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
+    INSTALL_PATH=/Library/Frameworks \
+    CODE_SIGNING_ALLOWED=NO \
+    archive
 
-    echo $( pwd )
-    echo "*** Finished building framwork ***"
-}
-
-cleanProject() {
-    echo "*** Cleaning project ***"
-    local projectDir="${scheme}"
-    cp "${BUILD_DIR}/xcf/${framework}/${simulatorSdk}.xcarchive/Products/Library/Frameworks/${framework}.framework" "./build/${framework}_ciao.framework"
-    echo "*** Finished cleaning project ***"
-}
-
-moveFiles() {
-    echo "*** Moving files ***"
-    local projectDir="${scheme}"
-    local cppLib="${scheme}_cpp"
-
-    rm -rf $projectDir
-    mkdir -p $projectDir
-
-    cp $cppLib/*.cpp $projectDir/
-    
-    cd $projectDir
-    for file in *.cpp; do
-        mv -- "$file" "${file%.cpp}.m"
-    done
-    cd ..
-    cp $cppLib/*.h $projectDir/
-    echo "*** Finished moving files ***"
-}
-
-if [ "$action" = "move" ]; then
-    moveFiles
-elif [ "$action" = "build" ]; then
-    buildFramework
-elif [ "$action" = "clean" ]; then
-    cleanProject
-else
-    echo "Operation not permitted"
-fi
+xcodebuild \
+    -create-xcframework \
+    -framework "${BUILD_DIR}/${framework}/${iOSArchive}/Products/Library/Frameworks/${framework}.framework" \
+    -framework "${BUILD_DIR}/${framework}/${SimulatorArchive}/Products/Library/Frameworks/${framework}.framework" \
+    -output "./build/${framework}.xcframework"
