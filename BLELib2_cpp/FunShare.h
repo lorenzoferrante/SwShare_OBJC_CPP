@@ -36,6 +36,9 @@ int32_t prepare_data_for_get_set_param (api_query_t *query, api_answer_t *answer
 int32_t prepare_data_for_gen_command (api_query_t *query, api_answer_t *answer, uint16_t size_query, uint16_t size_answer, uint8_t command, uint8_t q);
 int32_t prepare_data_for_devices_onboard (api_query_t *query, api_answer_t *answer, uint8_t device, uint8_t attivazione, uint8_t q);
 int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer, uint32_t * time, uint32_t *cnt_attiv_lungo, uint32_t *cnt_attiv_corto, uint32_t *time_attiv, char *nome, uint8_t get_set, uint8_t q);
+int32_t prepare_data_for_cloud_config_set (api_query_t *query, api_answer_t *answer, const char *wifi_ssid, const char *wifi_password, const char *mqtt_host, uint16_t mqtt_port, const char *mqtt_username, const char *mqtt_password, const char *device_id, uint8_t q);
+int32_t prepare_data_for_cloud_wifi_config_set (api_query_t *query, api_answer_t *answer, const char *wifi_ssid, const char *wifi_password, uint8_t q);
+int32_t prepare_data_for_cloud_status (api_query_t *query, api_answer_t *answer, cloud_status_answer_t *status, uint8_t q);
 uint8_t isleap(uint8_t year);
 void gettime(uint32_t t, t_calendar *r);
 uint32_t _mktime(t_calendar * t);

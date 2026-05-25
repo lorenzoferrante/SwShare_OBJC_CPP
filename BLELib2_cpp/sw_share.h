@@ -34,6 +34,13 @@ typedef uint16_t tempo_tw;
 #define N_QUEUE_HD_LOGGER									(5)
 #define N_QUEUE_WIFI_LOGGER								(5)
 #define N_CHAR_NAME											(16)
+#define CLOUD_WIFI_SSID_LEN								(32)
+#define CLOUD_WIFI_PASSWORD_LEN							(64)
+#define CLOUD_MQTT_HOST_LEN								(128)
+#define CLOUD_MQTT_USERNAME_LEN							(64)
+#define CLOUD_MQTT_PASSWORD_LEN							(128)
+#define CLOUD_DEVICE_ID_LEN								(64)
+#define CLOUD_ERROR_MESSAGE_LEN							(64)
 
 //-----------------------------------------------------------------------------
 // struttura calendario
@@ -143,6 +150,7 @@ typedef enum
 {
 	COM_CHANNEL_BLE,
 	COM_CHANNEL_SERIAL,
+	COM_CHANNEL_PROVISIONING,
 	N_COM_CHANNEL,
 } PACKED COM_CHANNELS_T;
 
@@ -156,7 +164,20 @@ typedef enum
 	COMMAND_GREETING_MESSAGE,			//
 	COMMAND_GET_SET_TIME,				//
 	COMMAND_DEVICES_ONBOARD,			//
+	COMMAND_CLOUD_CONFIG_SET,			//
+	COMMAND_CLOUD_WIFI_CONFIG_SET,		//
+	COMMAND_CLOUD_STATUS,				//
 } PACKED API_COMMAND_T;
+
+//-----------------------------------------------------------------------------
+typedef enum
+{
+	CLOUD_STATE_NOT_CONFIGURED,
+	CLOUD_STATE_DISCONNECTED,
+	CLOUD_STATE_CONNECTING,
+	CLOUD_STATE_CONNECTED,
+	CLOUD_STATE_ERROR,
+} PACKED CLOUD_CONNECTION_STATE_T;
 
 //-----------------------------------------------------------------------------
 typedef enum
@@ -267,6 +288,35 @@ typedef struct
 } PACKED devices_onboard_query_t;
 
 //-----------------------------------------------------------------------------
+typedef struct
+{
+	uint16_t									mqtt_port;
+	uint8_t									enabled;
+	uint8_t									spare;
+	char										wifi_ssid[CLOUD_WIFI_SSID_LEN];
+	char										wifi_password[CLOUD_WIFI_PASSWORD_LEN];
+	char										mqtt_host[CLOUD_MQTT_HOST_LEN];
+	char										mqtt_username[CLOUD_MQTT_USERNAME_LEN];
+	char										mqtt_password[CLOUD_MQTT_PASSWORD_LEN];
+	char										device_id[CLOUD_DEVICE_ID_LEN];
+} PACKED cloud_config_query_t;
+
+//-----------------------------------------------------------------------------
+typedef struct
+{
+	uint8_t									enabled;
+	uint8_t									spare[3];
+	char										wifi_ssid[CLOUD_WIFI_SSID_LEN];
+	char										wifi_password[CLOUD_WIFI_PASSWORD_LEN];
+} PACKED cloud_wifi_config_query_t;
+
+//-----------------------------------------------------------------------------
+typedef struct
+{
+	uint8_t									spare[16];
+} PACKED cloud_status_query_t;
+
+//-----------------------------------------------------------------------------
 typedef union
 {
 	uint8_t									max_packet[MAX_PACKET_SIZE];
@@ -276,6 +326,9 @@ typedef union
 	greeting_message_query_t			greeting_message;
 	get_set_time_query_t					get_set_time;
 	devices_onboard_query_t				devices_onboard;
+	cloud_config_query_t				cloud_config;
+	cloud_wifi_config_query_t			cloud_wifi_config;
+	cloud_status_query_t				cloud_status;
 } PACKED generic_queries_t;
 
 //-----------------------------------------------------------------------------
@@ -343,6 +396,22 @@ typedef struct
 } PACKED devices_onboard_answer_t;
 
 //-----------------------------------------------------------------------------
+typedef struct
+{
+	uint8_t									configured;
+	uint8_t									wifi_state;
+	uint8_t									mqtt_state;
+	uint8_t									spare;
+	int32_t									last_error;
+	uint16_t									mqtt_port;
+	uint16_t									spare_1;
+	char										wifi_ssid[CLOUD_WIFI_SSID_LEN];
+	char										mqtt_host[CLOUD_MQTT_HOST_LEN];
+	char										device_id[CLOUD_DEVICE_ID_LEN];
+	char										error_message[CLOUD_ERROR_MESSAGE_LEN];
+} PACKED cloud_status_answer_t;
+
+//-----------------------------------------------------------------------------
 typedef union
 {
 	uint8_t									max_packet[MAX_PACKET_SIZE];
@@ -352,6 +421,7 @@ typedef union
 	greeting_message_answer_t			greeting_message;
 	get_set_time_answer_t				get_set_time;
 	devices_onboard_answer_t			devices_onboard;
+	cloud_status_answer_t				cloud_status;
 } PACKED generic_answers_t;
 
 //-----------------------------------------------------------------------------

@@ -23,6 +23,20 @@
 #include "AESFunctions.h"
 #endif
 
+static void copy_bounded_string(char *dst, uint32_t dst_size, const char *src)
+{
+    if ((dst == NULL) || (dst_size == 0))
+        return;
+
+    memset(dst, 0, dst_size);
+    if (src == NULL)
+        return;
+
+    uint32_t i = 0;
+    for (; (i + 1) < dst_size && src[i] != '\0'; i++)
+        dst[i] = src[i];
+}
+
 #if defined(__OBJC__) && defined(CMP_CRIPTAZIONE)
 #define DATA_ENCRYPT(a, b, c, d) [AESFunctions data_encrypt:a and:b and:c and:d];
 #elif !defined(__OBJC__) && defined(CMP_CRIPTAZIONE)
@@ -379,6 +393,88 @@ int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer,
         *cnt_attiv_lungo = answer->data.get_set_time.cnt_attivazioni_lungo;
         *cnt_attiv_corto = answer->data.get_set_time.cnt_attivazioni_corto;
         *time_attiv = answer->data.get_set_time.time_activity;
+		return l;
+	}
+	else
+		return attesi;
+}
+
+//-----------------------------------------------------------------------------
+int32_t prepare_data_for_cloud_config_set(api_query_t *query, api_answer_t *answer, const char *wifi_ssid, const char *wifi_password, const char *mqtt_host, uint16_t mqtt_port, const char *mqtt_username, const char *mqtt_password, const char *device_id, uint8_t q)
+{
+	int32_t l;
+	int32_t attesi = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(cloud_status_answer_t);
+#if CMP_CRIPTAZIONE
+	attesi += ENC_KEY_LENGTH - (attesi % ENC_KEY_LENGTH);
+#endif
+	if (q == 1)
+	{
+		memset(query, 0, sizeof(api_query_t));
+		query->data.cloud_config.mqtt_port = mqtt_port;
+		query->data.cloud_config.enabled = 1;
+		copy_bounded_string(query->data.cloud_config.wifi_ssid, CLOUD_WIFI_SSID_LEN, wifi_ssid);
+		copy_bounded_string(query->data.cloud_config.wifi_password, CLOUD_WIFI_PASSWORD_LEN, wifi_password);
+		copy_bounded_string(query->data.cloud_config.mqtt_host, CLOUD_MQTT_HOST_LEN, mqtt_host);
+		copy_bounded_string(query->data.cloud_config.mqtt_username, CLOUD_MQTT_USERNAME_LEN, mqtt_username);
+		copy_bounded_string(query->data.cloud_config.mqtt_password, CLOUD_MQTT_PASSWORD_LEN, mqtt_password);
+		copy_bounded_string(query->data.cloud_config.device_id, CLOUD_DEVICE_ID_LEN, device_id);
+		l = prepare_data_for_gen_command(query, answer, sizeof(cloud_config_query_t), sizeof(cloud_status_answer_t), COMMAND_CLOUD_CONFIG_SET, q);
+		return l;
+	}
+	else if (q == 0)
+	{
+		l = prepare_data_for_gen_command(query, answer, sizeof(cloud_config_query_t), attesi, COMMAND_CLOUD_CONFIG_SET, q);
+		return l;
+	}
+	else
+		return attesi;
+}
+
+//-----------------------------------------------------------------------------
+int32_t prepare_data_for_cloud_wifi_config_set(api_query_t *query, api_answer_t *answer, const char *wifi_ssid, const char *wifi_password, uint8_t q)
+{
+	int32_t l;
+	int32_t attesi = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(cloud_status_answer_t);
+#if CMP_CRIPTAZIONE
+	attesi += ENC_KEY_LENGTH - (attesi % ENC_KEY_LENGTH);
+#endif
+	if (q == 1)
+	{
+		memset(query, 0, sizeof(api_query_t));
+		query->data.cloud_wifi_config.enabled = 1;
+		copy_bounded_string(query->data.cloud_wifi_config.wifi_ssid, CLOUD_WIFI_SSID_LEN, wifi_ssid);
+		copy_bounded_string(query->data.cloud_wifi_config.wifi_password, CLOUD_WIFI_PASSWORD_LEN, wifi_password);
+		l = prepare_data_for_gen_command(query, answer, sizeof(cloud_wifi_config_query_t), sizeof(cloud_status_answer_t), COMMAND_CLOUD_WIFI_CONFIG_SET, q);
+		return l;
+	}
+	else if (q == 0)
+	{
+		l = prepare_data_for_gen_command(query, answer, sizeof(cloud_wifi_config_query_t), attesi, COMMAND_CLOUD_WIFI_CONFIG_SET, q);
+		return l;
+	}
+	else
+		return attesi;
+}
+
+//-----------------------------------------------------------------------------
+int32_t prepare_data_for_cloud_status(api_query_t *query, api_answer_t *answer, cloud_status_answer_t *status, uint8_t q)
+{
+	int32_t l;
+	int32_t attesi = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(cloud_status_answer_t);
+#if CMP_CRIPTAZIONE
+	attesi += ENC_KEY_LENGTH - (attesi % ENC_KEY_LENGTH);
+#endif
+	if (q == 1)
+	{
+		memset(query, 0, sizeof(api_query_t));
+		l = prepare_data_for_gen_command(query, answer, sizeof(cloud_status_query_t), sizeof(cloud_status_answer_t), COMMAND_CLOUD_STATUS, q);
+		return l;
+	}
+	else if (q == 0)
+	{
+		l = prepare_data_for_gen_command(query, answer, sizeof(cloud_status_query_t), attesi, COMMAND_CLOUD_STATUS, q);
+		if ((l == 0) && (status != NULL))
+			memcpy(status, &answer->data.cloud_status, sizeof(cloud_status_answer_t));
 		return l;
 	}
 	else
