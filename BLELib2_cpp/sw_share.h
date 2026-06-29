@@ -167,7 +167,38 @@ typedef enum
 	COMMAND_CLOUD_CONFIG_SET,			//
 	COMMAND_CLOUD_WIFI_CONFIG_SET,		//
 	COMMAND_CLOUD_STATUS,				//
+	COMMAND_ISL29501,					// ISL29501 calibration / distance read
 } PACKED API_COMMAND_T;
+
+//-----------------------------------------------------------------------------
+typedef enum
+{
+	ISL_OP_CALIB_AVVIA,					// start calibration; uses ref_distance_mm
+	ISL_OP_CALIB_CONFERMA,				// operator confirmed target placement
+	ISL_OP_CALIB_STATO,					// read calibration state only
+	ISL_OP_LEGGI_DISTANZA,				// read averaged distance; uses n_campioni
+} PACKED ISL_OPERATION_T;
+
+//-----------------------------------------------------------------------------
+typedef enum
+{
+	ISL_CAL_IDLE = 0,
+	ISL_CAL_MAGNITUDE,
+	ISL_CAL_CROSSTALK,
+	ISL_CAL_DISTANCE,
+	ISL_CAL_SAVE,
+	ISL_CAL_DONE,
+	ISL_CAL_ERROR,
+} PACKED isl_cal_state_t;
+
+//-----------------------------------------------------------------------------
+typedef enum
+{
+	ISL_RESULT_OK = 0,
+	ISL_RESULT_ERROR,
+	ISL_RESULT_BUSY,
+	ISL_RESULT_NOT_SUPPORTED,
+} PACKED ISL_RESULT_T;
 
 //-----------------------------------------------------------------------------
 typedef enum
@@ -317,6 +348,16 @@ typedef struct
 } PACKED cloud_status_query_t;
 
 //-----------------------------------------------------------------------------
+typedef struct
+{
+	uint8_t									operazione;			// ISL_OPERATION_T
+	uint8_t									n_campioni;			// ISL_OP_LEGGI_DISTANZA; 0 = firmware default
+	uint16_t									spare_1;
+	uint32_t									ref_distance_mm;	// ISL_OP_CALIB_AVVIA
+	uint8_t									spare[56];
+} PACKED isl_query_t;
+
+//-----------------------------------------------------------------------------
 typedef union
 {
 	uint8_t									max_packet[MAX_PACKET_SIZE];
@@ -329,6 +370,7 @@ typedef union
 	cloud_config_query_t				cloud_config;
 	cloud_wifi_config_query_t			cloud_wifi_config;
 	cloud_status_query_t				cloud_status;
+	isl_query_t							isl;
 } PACKED generic_queries_t;
 
 //-----------------------------------------------------------------------------
@@ -412,6 +454,16 @@ typedef struct
 } PACKED cloud_status_answer_t;
 
 //-----------------------------------------------------------------------------
+typedef struct
+{
+	uint8_t									stato_calib;		// isl_cal_state_t
+	uint8_t									esito;				// ISL_RESULT_T
+	uint16_t									spare_1;
+	uint32_t									distanza_mm;
+	uint8_t									spare[56];
+} PACKED isl_answer_t;
+
+//-----------------------------------------------------------------------------
 typedef union
 {
 	uint8_t									max_packet[MAX_PACKET_SIZE];
@@ -422,6 +474,7 @@ typedef union
 	get_set_time_answer_t				get_set_time;
 	devices_onboard_answer_t			devices_onboard;
 	cloud_status_answer_t				cloud_status;
+	isl_answer_t							isl;
 } PACKED generic_answers_t;
 
 //-----------------------------------------------------------------------------

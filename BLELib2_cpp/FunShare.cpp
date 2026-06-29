@@ -482,6 +482,41 @@ int32_t prepare_data_for_cloud_status(api_query_t *query, api_answer_t *answer, 
 }
 
 //-----------------------------------------------------------------------------
+int32_t prepare_data_for_isl(api_query_t *query, api_answer_t *answer, uint8_t operazione, uint8_t n_campioni, uint32_t ref_distance_mm, uint8_t *stato_calib, uint8_t *esito, uint32_t *distanza_mm, uint8_t q)
+{
+	int32_t l;
+	int32_t attesi = sizeof(api_answer_t) - sizeof(generic_answers_t) + sizeof(isl_answer_t);
+#if CMP_CRIPTAZIONE
+	attesi += ENC_KEY_LENGTH - (attesi % ENC_KEY_LENGTH);
+#endif
+	if (q == 1)
+	{
+		memset(query, 0, sizeof(api_query_t));
+		query->data.isl.operazione = operazione;
+		query->data.isl.n_campioni = n_campioni;
+		query->data.isl.ref_distance_mm = ref_distance_mm;
+		l = prepare_data_for_gen_command(query, answer, sizeof(isl_query_t), sizeof(isl_answer_t), COMMAND_ISL29501, q);
+		return l;
+	}
+	else if (q == 0)
+	{
+		l = prepare_data_for_gen_command(query, answer, sizeof(isl_query_t), attesi, COMMAND_ISL29501, q);
+		if (l == 0)
+		{
+			if (stato_calib != NULL)
+				*stato_calib = answer->data.isl.stato_calib;
+			if (esito != NULL)
+				*esito = answer->data.isl.esito;
+			if (distanza_mm != NULL)
+				*distanza_mm = answer->data.isl.distanza_mm;
+		}
+		return l;
+	}
+	else
+		return attesi;
+}
+
+//-----------------------------------------------------------------------------
 uint8_t isleap(uint8_t year) {
     return ((!(year%4)) && ((year%100) || !(year%400)));
 }

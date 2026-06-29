@@ -39,6 +39,7 @@ int32_t prepare_data_for_get_set_time (api_query_t *query, api_answer_t *answer,
 int32_t prepare_data_for_cloud_config_set (api_query_t *query, api_answer_t *answer, const char *wifi_ssid, const char *wifi_password, const char *mqtt_host, uint16_t mqtt_port, const char *mqtt_username, const char *mqtt_password, const char *device_id, uint8_t q);
 int32_t prepare_data_for_cloud_wifi_config_set (api_query_t *query, api_answer_t *answer, const char *wifi_ssid, const char *wifi_password, uint8_t q);
 int32_t prepare_data_for_cloud_status (api_query_t *query, api_answer_t *answer, cloud_status_answer_t *status, uint8_t q);
+int32_t prepare_data_for_isl (api_query_t *query, api_answer_t *answer, uint8_t operazione, uint8_t n_campioni, uint32_t ref_distance_mm, uint8_t *stato_calib, uint8_t *esito, uint32_t *distanza_mm, uint8_t q);
 uint8_t isleap(uint8_t year);
 void gettime(uint32_t t, t_calendar *r);
 uint32_t _mktime(t_calendar * t);
