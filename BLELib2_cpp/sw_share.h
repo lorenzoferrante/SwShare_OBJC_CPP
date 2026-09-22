@@ -246,10 +246,10 @@ typedef enum
 	PAR_SCA_OPT_SCARICO_AUTO,				//20	Parametro 21		opzione. 0:se viene fatto uno scarico manuale il sistema di scarico automatico resta attivo, 1:se viene fatto uno scarico manuale il sistema di scarico automatico non si attiva
 	PAR_SCA_OPT_PULSANTE_OTTICO,			//21	Parametro 22		opzione. 0: il pulsante ottico non e' abilitato, 1: il pulsante ottico e' abilitato
 
-	PAR_AVAILABLE_4,
-	PAR_AVAILABLE_5,
-	PAR_AVAILABLE_6,
-	PAR_AVAILABLE_7,
+	PAR_RUB_DURATA_APERTURA_MANUALE = 22, // seconds, persistent, 180..3600 step 60
+	PAR_RUB_APERTURA_MANUALE = 23, // write 1=start/0=stop, read RUB_MANUAL_STATE_T
+	PAR_RUB_TEMPO_RESIDUO_MANUALE = 24, // read only, ceil seconds remaining
+	PAR_RUB_SUPPORTO_APERTURA_MANUALE = 25, // read only, signature below
 	PAR_AVAILABLE_8,
 	PAR_AVAILABLE_9,
 	PAR_AVAILABLE_10,
@@ -265,6 +265,19 @@ typedef enum
 	PAR_AVAILABLE_20,
 	N_PARAMETERS,
 } PACKED PARAMETERS_T;
+
+// Timed manual water control: only RUBINETTO supports these parameters.
+#define RUB_MANUAL_SUPPORT_SIGNATURE (0x52554201UL)
+#define RUB_MANUAL_MIN_SECONDS (180U)
+#define RUB_MANUAL_MAX_SECONDS (3600U)
+#define RUB_MANUAL_STEP_SECONDS (60U)
+#define RUB_MANUAL_DEFAULT_SECONDS (180U)
+typedef enum {
+    RUB_MANUAL_AVAILABLE = 0,
+    RUB_MANUAL_RUNNING = 1,
+    RUB_MANUAL_AUTOMATIC = 2,
+    RUB_MANUAL_CALIBRATING = 3,
+} PACKED RUB_MANUAL_STATE_T;
 
 //-----------------------------------------------------------------------------
 //QUERIES
