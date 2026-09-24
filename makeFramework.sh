@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 scheme=BLELib2
 framework=BLELib2
